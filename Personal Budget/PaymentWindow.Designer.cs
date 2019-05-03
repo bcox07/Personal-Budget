@@ -45,13 +45,7 @@
             this.IDBox = new System.Windows.Forms.TextBox();
             this.deleteBtn = new System.Windows.Forms.Button();
             this.dateLbl = new System.Windows.Forms.Label();
-            this.filterLbl = new System.Windows.Forms.Label();
-            this.sortBox = new System.Windows.Forms.ComboBox();
-            this.incButton = new System.Windows.Forms.RadioButton();
-            this.decButton = new System.Windows.Forms.RadioButton();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.budgetGridView)).BeginInit();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // transactionBtn
@@ -72,9 +66,9 @@
             // 
             this.budgetGridView.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
             this.budgetGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.budgetGridView.Location = new System.Drawing.Point(446, 74);
+            this.budgetGridView.Location = new System.Drawing.Point(446, 12);
             this.budgetGridView.Name = "budgetGridView";
-            this.budgetGridView.Size = new System.Drawing.Size(761, 519);
+            this.budgetGridView.Size = new System.Drawing.Size(761, 581);
             this.budgetGridView.TabIndex = 1;
             this.budgetGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.budgetGridView_CellClick);
             // 
@@ -234,74 +228,12 @@
             this.dateLbl.TabIndex = 18;
             this.dateLbl.Text = "Date";
             // 
-            // filterLbl
-            // 
-            this.filterLbl.AutoSize = true;
-            this.filterLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.filterLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.filterLbl.Location = new System.Drawing.Point(874, 22);
-            this.filterLbl.Name = "filterLbl";
-            this.filterLbl.Size = new System.Drawing.Size(59, 31);
-            this.filterLbl.TabIndex = 19;
-            this.filterLbl.Text = "Sort";
-            // 
-            // sortBox
-            // 
-            this.sortBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sortBox.FormattingEnabled = true;
-            this.sortBox.Location = new System.Drawing.Point(939, 25);
-            this.sortBox.Name = "sortBox";
-            this.sortBox.Size = new System.Drawing.Size(143, 28);
-            this.sortBox.TabIndex = 20;
-            this.sortBox.SelectedIndexChanged += new System.EventHandler(this.sortBox_SelectedIndexChanged);
-            // 
-            // incButton
-            // 
-            this.incButton.AutoSize = true;
-            this.incButton.Location = new System.Drawing.Point(6, 19);
-            this.incButton.Name = "incButton";
-            this.incButton.Size = new System.Drawing.Size(92, 24);
-            this.incButton.TabIndex = 21;
-            this.incButton.TabStop = true;
-            this.incButton.Text = "Increasing";
-            this.incButton.UseVisualStyleBackColor = true;
-            this.incButton.CheckedChanged += new System.EventHandler(this.incButton_CheckedChanged);
-            // 
-            // decButton
-            // 
-            this.decButton.AutoSize = true;
-            this.decButton.Location = new System.Drawing.Point(6, 42);
-            this.decButton.Name = "decButton";
-            this.decButton.Size = new System.Drawing.Size(96, 24);
-            this.decButton.TabIndex = 22;
-            this.decButton.TabStop = true;
-            this.decButton.Text = "Decreasing";
-            this.decButton.UseVisualStyleBackColor = true;
-            this.decButton.CheckedChanged += new System.EventHandler(this.decButton_CheckedChanged);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.incButton);
-            this.groupBox1.Controls.Add(this.decButton);
-            this.groupBox1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.groupBox1.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.groupBox1.Location = new System.Drawing.Point(1099, 2);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(118, 70);
-            this.groupBox1.TabIndex = 23;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Direction";
-            // 
             // PaymentWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(107)))), ((int)(((byte)(135)))));
             this.ClientSize = new System.Drawing.Size(1219, 605);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.sortBox);
-            this.Controls.Add(this.filterLbl);
             this.Controls.Add(this.dateLbl);
             this.Controls.Add(this.deleteBtn);
             this.Controls.Add(this.IDLbl);
@@ -323,8 +255,6 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.budgetGridView)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -349,11 +279,6 @@
         private System.Windows.Forms.TextBox IDBox;
         private System.Windows.Forms.Button deleteBtn;
         private System.Windows.Forms.Label dateLbl;
-        private System.Windows.Forms.Label filterLbl;
-        private System.Windows.Forms.ComboBox sortBox;
-        private System.Windows.Forms.RadioButton incButton;
-        private System.Windows.Forms.RadioButton decButton;
-        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
 

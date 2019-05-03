@@ -39,14 +39,12 @@ namespace Personal_Budget
             incomeGridView.DataSource = ds.Tables[0];
 
             incomeGridView.Columns[2].DefaultCellStyle.Format = "C";
-            int i = 0;
-            while (i < sort.Length)
-            {
-                sortBox.Items.Add(sort[i]);
-                i++;
-            }
+           
 
-            incButton.Select();
+            foreach (DataGridViewColumn column in incomeGridView.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
         }
 
         private void transactionBtn_Click(object sender, EventArgs e)
@@ -130,11 +128,16 @@ namespace Personal_Budget
             cmd.Parameters.AddWithValue("@IncomeDate", date);
             cmd.Parameters.AddWithValue("@IncomeMonth", month);
 
-
-
             cmd.ExecuteNonQuery();
             connection.Close();
-            
+
+            ds.Tables.Clear();
+            dataadapter = new SqlDataAdapter(sql, connection);
+            connection.Open();
+            dataadapter.Fill(ds, "Income");
+            connection.Close();
+            incomeGridView.DataSource = ds.Tables[0];
+
 
 
         }
@@ -147,15 +150,65 @@ namespace Personal_Budget
             connection.Open();
             cmd.ExecuteNonQuery();
             connection.Close();
+
+            ds.Tables.Clear();
+            dataadapter = new SqlDataAdapter(sql, connection);
+            connection.Open();
+            dataadapter.Fill(ds, "Income");
+            connection.Close();
+            incomeGridView.DataSource = ds.Tables[0];
         }
 
         private void incomeGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex == -1) return;
+            incomeGridView.Rows[e.RowIndex].Selected = true;
             IDBox.Text = incomeGridView.Rows[e.RowIndex].Cells[0].Value.ToString();
             paidFromBox.Text = incomeGridView.Rows[e.RowIndex].Cells[1].Value.ToString();
             paymentBox.Text = incomeGridView.Rows[e.RowIndex].Cells[2].Value.ToString();
             transactionDatePicker.Text = incomeGridView.Rows[e.RowIndex].Cells[3].Value.ToString();
 
+        }
+
+        private void incomeGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            DataGridViewColumn newColumn = incomeGridView.Columns[e.ColumnIndex];
+            DataGridViewColumn oldColumn = incomeGridView.SortedColumn;
+            ListSortDirection direction;
+
+            // If oldColumn is null, then the DataGridView is not sorted.
+            if (oldColumn != null)
+            {
+                // Sort the same column again, reversing the SortOrder.
+                if (oldColumn == newColumn && incomeGridView.SortOrder == System.Windows.Forms.SortOrder.Ascending)
+                {
+                    direction = ListSortDirection.Descending;
+                }
+                else
+                {
+                    // Sort a new column and remove the old SortGlyph.
+                    direction = ListSortDirection.Ascending;
+                    oldColumn.HeaderCell.SortGlyphDirection = System.Windows.Forms.SortOrder.None;
+                }
+            }
+            else
+            {
+                direction = ListSortDirection.Ascending;
+            }
+
+            // Sort the selected column.
+            incomeGridView.Sort(newColumn, direction);
+            newColumn.HeaderCell.SortGlyphDirection = direction == ListSortDirection.Ascending ?
+                System.Windows.Forms.SortOrder.Ascending : System.Windows.Forms.SortOrder.Descending;
+        }
+
+        private void incomeGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            // Put each of the columns into programmatic sort mode.
+            foreach (DataGridViewColumn column in incomeGridView.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.Programmatic;
+            }
         }
 
         private void updateBtn_Click(object sender, EventArgs e)
@@ -217,6 +270,13 @@ namespace Personal_Budget
             connection.Open();
             cmd.ExecuteNonQuery();
             connection.Close();
+
+            ds.Tables.Clear();
+            dataadapter = new SqlDataAdapter(sql, connection);
+            connection.Open();
+            dataadapter.Fill(ds, "Income");
+            connection.Close();
+            incomeGridView.DataSource = ds.Tables[0];
         }
 
         private void backButton_Click(object sender, EventArgs e)
@@ -236,78 +296,6 @@ namespace Personal_Budget
         {
             ds.Tables.Clear();
             dataadapter = new SqlDataAdapter(sql, connection);
-            connection.Open();
-            dataadapter.Fill(ds, "Income");
-            connection.Close();
-            incomeGridView.DataSource = ds.Tables[0];
-        }
-
-        private void incButton_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                String temp = "SELECT * FROM INCOME ORDER BY " + Convert.ToString(sortBox.SelectedItem) + " ASC";
-
-                SqlCommand cmd = new SqlCommand(temp, connection);
-                connection.Open();
-                cmd.ExecuteNonQuery();
-                connection.Close();
-
-                ds.Tables.Clear();
-                dataadapter = new SqlDataAdapter(temp, connection);
-                connection.Open();
-                dataadapter.Fill(ds, "Sort");
-                connection.Close();
-                incomeGridView.DataSource = ds.Tables[0];
-            }
-            catch (SqlException)
-            {
-                connection.Close();
-            }
-        }
-
-        private void decButton_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                String temp = "SELECT * FROM INCOME ORDER BY " + Convert.ToString(sortBox.SelectedItem) + " DESC";
-
-                SqlCommand cmd = new SqlCommand(temp, connection);
-                connection.Open();
-                cmd.ExecuteNonQuery();
-                connection.Close();
-
-                ds.Tables.Clear();
-                dataadapter = new SqlDataAdapter(temp, connection);
-                connection.Open();
-                dataadapter.Fill(ds, "Sort");
-                connection.Close();
-                incomeGridView.DataSource = ds.Tables[0];
-            }
-            catch (SqlException)
-            {
-                connection.Close();
-            }
-        }
-
-        private void sortBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            String temp;
-            temp = Convert.ToString(sortBox.SelectedItem);
-            sort = "SELECT * FROM INCOME ORDER BY " + temp;
-
-            if (decButton.Checked)
-            {
-                sort += " DESC";
-            }
-
-            SqlCommand cmd = new SqlCommand(sort, connection);
-            connection.Open();
-            cmd.ExecuteNonQuery();
-            connection.Close();
-
-            ds.Tables.Clear();
-            dataadapter = new SqlDataAdapter(sort, connection);
             connection.Open();
             dataadapter.Fill(ds, "Income");
             connection.Close();
