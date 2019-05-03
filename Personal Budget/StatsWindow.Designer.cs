@@ -63,15 +63,15 @@
             this.categoryChart.Name = "categoryChart";
             this.categoryChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
             this.categoryChart.PaletteCustomColors = new System.Drawing.Color[] {
-        System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(54))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(154)))), ((int)(((byte)(71)))), ((int)(((byte)(50))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(88)))), ((int)(((byte)(62))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(122)))), ((int)(((byte)(101))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(126)))), ((int)(((byte)(179)))), ((int)(((byte)(195))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(89)))), ((int)(((byte)(157)))), ((int)(((byte)(192))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(132)))), ((int)(((byte)(166))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(107)))), ((int)(((byte)(135))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(88)))), ((int)(((byte)(111)))))};
+            System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(54))))),
+            System.Drawing.Color.FromArgb(((int)(((byte)(154)))), ((int)(((byte)(71)))), ((int)(((byte)(50))))),
+            System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(88)))), ((int)(((byte)(62))))),
+            System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(122)))), ((int)(((byte)(101))))),
+            System.Drawing.Color.FromArgb(((int)(((byte)(126)))), ((int)(((byte)(179)))), ((int)(((byte)(195))))),
+            System.Drawing.Color.FromArgb(((int)(((byte)(89)))), ((int)(((byte)(157)))), ((int)(((byte)(192))))),
+            System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(132)))), ((int)(((byte)(166))))),
+            System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(107)))), ((int)(((byte)(135))))),
+            System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(88)))), ((int)(((byte)(111)))))};
             series3.ChartArea = "ChartArea1";
             series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie;
             series3.Name = "Series1";

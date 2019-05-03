@@ -38,7 +38,7 @@ namespace Personal_Budget
             connection.Close();
             incomeGridView.DataSource = ds.Tables[0];
 
-
+            incomeGridView.Columns[2].DefaultCellStyle.Format = "C";
             int i = 0;
             while (i < sort.Length)
             {

@@ -29,7 +29,7 @@ namespace Personal_Budget
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            String[] sort = { "PaymentAccount", "Category", "Payment", "PaidTo", "TransactionDate"};
+            String[] sort = {"PaymentAccount", "Category", "Payment", "PaidTo", "TransactionDate"};
             transactionDatePicker.Format = DateTimePickerFormat.Custom;
             transactionDatePicker.CustomFormat = "yyyy-MM-dd";
 
@@ -39,6 +39,8 @@ namespace Personal_Budget
             dataadapter.Fill(ds, "Budget");
             connection.Close();
             budgetGridView.DataSource = ds.Tables[0];
+
+            budgetGridView.Columns[3].DefaultCellStyle.Format = "C";
 
             int i = 0;
             while (i < sort.Length)
@@ -129,6 +131,13 @@ namespace Personal_Budget
             cmd.Parameters.AddWithValue("@TransactionMonth", month);
             cmd.ExecuteNonQuery();            
             connection.Close();
+
+            ds.Tables.Clear();
+            dataadapter = new SqlDataAdapter(sql, connection);
+            connection.Open();
+            dataadapter.Fill(ds, "Budget");
+            connection.Close();
+            budgetGridView.DataSource = ds.Tables[0];
         }
 
 
@@ -171,6 +180,13 @@ namespace Personal_Budget
             cmd.ExecuteNonQuery();
             connection.Close();
 
+            ds.Tables.Clear();
+            dataadapter = new SqlDataAdapter(sql, connection);
+            connection.Open();
+            dataadapter.Fill(ds, "Budget");
+            connection.Close();
+            budgetGridView.DataSource = ds.Tables[0];
+
         }
 
         private void deleteBtn_Click(object sender, EventArgs e)
@@ -181,6 +197,13 @@ namespace Personal_Budget
             connection.Open();
             cmd.ExecuteNonQuery();
             connection.Close();
+
+            ds.Tables.Clear();
+            dataadapter = new SqlDataAdapter(sql, connection);
+            connection.Open();
+            dataadapter.Fill(ds, "Budget");
+            connection.Close();
+            budgetGridView.DataSource = ds.Tables[0];
         }
 
         private void refreshBtn_Click(object sender, EventArgs e)
