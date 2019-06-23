@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IncomeWindow));
             this.dateLbl = new System.Windows.Forms.Label();
             this.deleteBtn = new System.Windows.Forms.Button();
             this.IDLbl = new System.Windows.Forms.Label();
@@ -49,7 +50,7 @@
             this.dateLbl.AutoSize = true;
             this.dateLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.dateLbl.Location = new System.Drawing.Point(92, 266);
+            this.dateLbl.Location = new System.Drawing.Point(92, 221);
             this.dateLbl.Name = "dateLbl";
             this.dateLbl.Size = new System.Drawing.Size(61, 31);
             this.dateLbl.TabIndex = 31;
@@ -61,7 +62,7 @@
             this.deleteBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.deleteBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.deleteBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.deleteBtn.Location = new System.Drawing.Point(175, 409);
+            this.deleteBtn.Location = new System.Drawing.Point(175, 364);
             this.deleteBtn.Name = "deleteBtn";
             this.deleteBtn.Size = new System.Drawing.Size(211, 70);
             this.deleteBtn.TabIndex = 29;
@@ -85,7 +86,7 @@
             this.IDBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.IDBox.Location = new System.Drawing.Point(159, 35);
             this.IDBox.Name = "IDBox";
-            this.IDBox.Size = new System.Drawing.Size(206, 31);
+            this.IDBox.Size = new System.Drawing.Size(216, 31);
             this.IDBox.TabIndex = 27;
             // 
             // updateBtn
@@ -94,7 +95,7 @@
             this.updateBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.updateBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.updateBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.updateBtn.Location = new System.Drawing.Point(176, 333);
+            this.updateBtn.Location = new System.Drawing.Point(176, 288);
             this.updateBtn.Name = "updateBtn";
             this.updateBtn.Size = new System.Drawing.Size(210, 70);
             this.updateBtn.TabIndex = 26;
@@ -107,7 +108,7 @@
             this.paymentLbl.AutoSize = true;
             this.paymentLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.paymentLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.paymentLbl.Location = new System.Drawing.Point(47, 188);
+            this.paymentLbl.Location = new System.Drawing.Point(47, 158);
             this.paymentLbl.Name = "paymentLbl";
             this.paymentLbl.Size = new System.Drawing.Size(106, 31);
             this.paymentLbl.TabIndex = 25;
@@ -118,7 +119,7 @@
             this.paidFromLbl.AutoSize = true;
             this.paidFromLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.paidFromLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.paidFromLbl.Location = new System.Drawing.Point(29, 111);
+            this.paidFromLbl.Location = new System.Drawing.Point(29, 96);
             this.paidFromLbl.Name = "paidFromLbl";
             this.paidFromLbl.Size = new System.Drawing.Size(124, 31);
             this.paidFromLbl.TabIndex = 24;
@@ -127,25 +128,25 @@
             // transactionDatePicker
             // 
             this.transactionDatePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.transactionDatePicker.Location = new System.Drawing.Point(159, 266);
+            this.transactionDatePicker.Location = new System.Drawing.Point(159, 221);
             this.transactionDatePicker.Name = "transactionDatePicker";
-            this.transactionDatePicker.Size = new System.Drawing.Size(206, 31);
+            this.transactionDatePicker.Size = new System.Drawing.Size(216, 31);
             this.transactionDatePicker.TabIndex = 23;
             // 
             // paymentBox
             // 
             this.paymentBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.paymentBox.Location = new System.Drawing.Point(159, 188);
+            this.paymentBox.Location = new System.Drawing.Point(159, 158);
             this.paymentBox.Name = "paymentBox";
-            this.paymentBox.Size = new System.Drawing.Size(206, 31);
+            this.paymentBox.Size = new System.Drawing.Size(216, 31);
             this.paymentBox.TabIndex = 22;
             // 
             // paidFromBox
             // 
             this.paidFromBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.paidFromBox.Location = new System.Drawing.Point(159, 111);
+            this.paidFromBox.Location = new System.Drawing.Point(159, 96);
             this.paidFromBox.Name = "paidFromBox";
-            this.paidFromBox.Size = new System.Drawing.Size(206, 31);
+            this.paidFromBox.Size = new System.Drawing.Size(216, 31);
             this.paidFromBox.TabIndex = 21;
             // 
             // incomeGridView
@@ -154,7 +155,7 @@
             this.incomeGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.incomeGridView.Location = new System.Drawing.Point(392, 12);
             this.incomeGridView.Name = "incomeGridView";
-            this.incomeGridView.Size = new System.Drawing.Size(556, 467);
+            this.incomeGridView.Size = new System.Drawing.Size(556, 422);
             this.incomeGridView.TabIndex = 20;
             this.incomeGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.incomeGridView_CellClick);
             // 
@@ -164,7 +165,7 @@
             this.transactionBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.transactionBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.transactionBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.transactionBtn.Location = new System.Drawing.Point(11, 333);
+            this.transactionBtn.Location = new System.Drawing.Point(11, 288);
             this.transactionBtn.Name = "transactionBtn";
             this.transactionBtn.Size = new System.Drawing.Size(159, 70);
             this.transactionBtn.TabIndex = 19;
@@ -178,7 +179,7 @@
             this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.backButton.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.backButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.backButton.Location = new System.Drawing.Point(12, 409);
+            this.backButton.Location = new System.Drawing.Point(12, 364);
             this.backButton.Name = "backButton";
             this.backButton.Size = new System.Drawing.Size(158, 70);
             this.backButton.TabIndex = 32;
@@ -191,7 +192,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(107)))), ((int)(((byte)(135)))));
-            this.ClientSize = new System.Drawing.Size(963, 491);
+            this.ClientSize = new System.Drawing.Size(963, 449);
+            this.ControlBox = false;
             this.Controls.Add(this.backButton);
             this.Controls.Add(this.dateLbl);
             this.Controls.Add(this.deleteBtn);
@@ -205,8 +207,9 @@
             this.Controls.Add(this.paidFromBox);
             this.Controls.Add(this.incomeGridView);
             this.Controls.Add(this.transactionBtn);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "IncomeWindow";
-            this.Text = "IncomeWindow";
+            this.Text = "Income";
             this.Load += new System.EventHandler(this.IncomeWindow_Load);
             ((System.ComponentModel.ISupportInitialize)(this.incomeGridView)).EndInit();
             this.ResumeLayout(false);

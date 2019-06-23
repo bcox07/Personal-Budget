@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PaymentWindow));
             this.transactionBtn = new System.Windows.Forms.Button();
             this.budgetGridView = new System.Windows.Forms.DataGridView();
             this.paymentAcctBox = new System.Windows.Forms.TextBox();
@@ -234,6 +235,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(107)))), ((int)(((byte)(135)))));
             this.ClientSize = new System.Drawing.Size(1219, 605);
+            this.ControlBox = false;
             this.Controls.Add(this.dateLbl);
             this.Controls.Add(this.deleteBtn);
             this.Controls.Add(this.IDLbl);
@@ -251,8 +253,9 @@
             this.Controls.Add(this.paymentAcctBox);
             this.Controls.Add(this.budgetGridView);
             this.Controls.Add(this.transactionBtn);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PaymentWindow";
-            this.Text = "Form1";
+            this.Text = "Payments";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.budgetGridView)).EndInit();
             this.ResumeLayout(false);
