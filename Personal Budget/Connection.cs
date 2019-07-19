@@ -9,7 +9,7 @@ namespace Personal_Budget
 
     class Connection
     {
-        public String connectionString = "Data Source=DESKTOP-PG47RQQ; Initial Catalog=Budget; Integrated Security=True;";
+        public String connectionString = "Data Source=BRIAN-DESKTOP; Initial Catalog=Budget; Integrated Security=True;";
         public String getConnection()
         {
             return connectionString;

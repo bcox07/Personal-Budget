@@ -25,15 +25,14 @@ namespace Personal_Budget
         private Color mist = Color.FromArgb(144, 175, 197);
         private Color stone = Color.FromArgb(51, 107, 135);
 
-        static int numCategories = 0;
         static int numPaidTo = 8;
         static int numPaidFrom = 8;
 
-        static String[] category;
         static String[] paidTo = new string[numPaidTo];
         static String[] paidFrom = new string[numPaidFrom];
+        static List<String> category = new List<String>();
 
-        static String[] categoryCost;
+        static List<String> categoryCost = new List<String>();
         static String[] paidToCost = new String[numPaidTo]; 
         static String[] paidFromCost = new string[numPaidFrom];
         
@@ -71,6 +70,7 @@ namespace Personal_Budget
             paidTo = new string[numPaidTo];
             paidFrom = new string[numPaidFrom];
 
+            categoryCost.Clear();
             paidToCost = new String[numPaidTo];
             paidFromCost = new String[numPaidFrom];
 
@@ -130,29 +130,15 @@ namespace Personal_Budget
 
 
 
-            //Checks number of categories and updates numCategories if number of categories is less than 8
-            String tempString;
-            connection.Open();
-            cmd = new SqlCommand("SELECT COUNT(DISTINCT Category) AS NumCategories FROM BUDGET", connection);
-            reader = cmd.ExecuteReader();
-            reader.Read();
-            tempString = String.Format("{0}", reader["NumCategories"]);
-            numCategories = Convert.ToInt32(tempString);
-            categoryCost = new String[numCategories];
-            connection.Close();
-
-
             //Fill category array
-            category = new String[15];
             connection.Open();
             cmd = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY Category ORDER BY TotalPayment DESC", connection);
             reader = cmd.ExecuteReader();
 
-             i = 0;
             while (reader.Read())
-            {
-                category[i] = String.Format("{0}", reader["Category"]);
-                i++;
+            {                
+                category.Add(String.Format("{0}", reader["Category"]));
+
             }
             connection.Close();
 
@@ -186,7 +172,7 @@ namespace Personal_Budget
             //Fill paidToCost array
             for (i = 0; i < numPaidTo; i++)
             {
-                cmd = new SqlCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET WHERE PaidTo = @PaidTo GROUP BY PaidTo", connection);
+                cmd = new SqlCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET WHERE PaidTo = @PaidTo GROUP BY PaidTo", connection);
                 cmd.Parameters.AddWithValue("@PaidTo", paidTo[i]);
 
 
@@ -215,10 +201,10 @@ namespace Personal_Budget
 
 
             //Fill categoryCost array
-            for (i = 0; i < numCategories; i++)
+            for (i = 0; i < category.Count; i++)
             {
 
-                cmd = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE CATEGORY = @Category GROUP BY Category ORDER BY TotalPayment DESC", connection);
+                cmd = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE CATEGORY = @Category GROUP BY Category", connection);
                 cmd.Parameters.AddWithValue("@Category", category[i]);
 
                 connection.Open();
@@ -226,9 +212,9 @@ namespace Personal_Budget
                 reader = cmd.ExecuteReader();
                 reader.Read();
 
-                categoryCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
                 connection.Close();
-            }
+            } 
 
 
             //Fill net, monthCost, and monthIncome array
@@ -253,7 +239,7 @@ namespace Personal_Budget
             String categorySeries = "Category";
             categoryChart.Series.Add(categorySeries);
 
-            for (i = 0; i < 8; i++)
+            for (i = 0; i < category.Count; i++)
             {
                 categoryChart.Series[categorySeries].Points.AddXY(category[i], categoryCost[i]);
                 categoryChart.Series[categorySeries].Points[i].Label = category[i];
@@ -282,7 +268,6 @@ namespace Personal_Budget
             monthChart.Series[monthPaymentSeries].BorderWidth = 8;
             monthChart.Series[monthPaymentSeries].LabelForeColor = Color.White;
             monthChart.Series[monthPaymentSeries].Color = autumn;
-            monthChart.Series[monthPaymentSeries].IsVisibleInLegend = true;
 
             monthChart.Series.Add(monthIncomeSeries);
             monthChart.Series[monthIncomeSeries].ChartType = SeriesChartType.Line;
@@ -406,11 +391,11 @@ namespace Personal_Budget
 
         private void monthChooser_SelectedIndexChanged(object sender, EventArgs e)
         {
-            categoryCost = new string[8];
+            categoryCost.Clear();
             paidToCost = new string[8];
             paidFromCost = new string[8];
 
-            category = new String[8];
+            category.Clear();
             paidTo = new String[8];
             paidFrom = new string[8];
 
@@ -422,18 +407,18 @@ namespace Personal_Budget
             {
                 //Total Category Chart
                 connection.Open();
-                SqlCommand cmd1 = new SqlCommand("SELECT TOP 8 Category, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY Category ORDER BY TotalPayment DESC", connection);
+                SqlCommand cmd1 = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY Category ORDER BY TotalPayment DESC", connection);
                 reader = cmd1.ExecuteReader();
 
                 int i = 0;
                 while (reader.Read())
                 {
-                    category[i] = String.Format("{0}", reader["Category"]);
+                    category.Add(String.Format("{0}", reader["Category"]));
                     i++;
                 }
                 connection.Close();
 
-                for (i = 0; i < category.Length; i++)
+                for (i = 0; i < category.Count; i++)
                 {
                     connection = new SqlConnection(dbConnection.getConnection());
 
@@ -445,7 +430,7 @@ namespace Personal_Budget
                     reader = cmd1.ExecuteReader();
                     reader.Read();
 
-                    categoryCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                    categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
                     connection.Close();
                 }
 
@@ -513,40 +498,23 @@ namespace Personal_Budget
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 //CATEGORIES
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                connection.Open();
-                SqlCommand cmd = new SqlCommand("SELECT COUNT(DISTINCT Category) AS NumCategories FROM BUDGET WHERE TransactionMonth = @Month", connection);
-                cmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
-                cmd.ExecuteNonQuery();
-
-                reader = cmd.ExecuteReader();
-                reader.Read();
-                temp = String.Format("{0}", reader["NumCategories"]);
-                numCategories = Convert.ToInt32(temp);
-                if (numCategories < 8)
-                {
-                    categoryCost = new String[numCategories];
-                    category = new String[numCategories];
-                }
-                connection.Close();
 
 
                 connection = new SqlConnection(dbConnection.getConnection());
                 connection.Open();
-                cmd = new SqlCommand("SELECT TOP 8 Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE TransactionMonth = @Month GROUP BY Category ORDER BY TotalPayment DESC", connection);
+                cmd = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE TransactionMonth = @Month GROUP BY Category ORDER BY TotalPayment DESC", connection);
                 cmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
                 cmd.ExecuteNonQuery();
 
                 reader = cmd.ExecuteReader();
 
-                int i = 0;
                 while (reader.Read())
                 {
-                    category[i] = String.Format("{0}", reader["Category"]);
-                    i++;
+                    category.Add(String.Format("{0}", reader["Category"]));
                 }
                 connection.Close();
-
-                for (i = 0; i < category.Length; i++)
+                int i;
+                for (i = 0; i < category.Count; i++)
                 {
                     connection = new SqlConnection(dbConnection.getConnection());
 
@@ -559,7 +527,7 @@ namespace Personal_Budget
                     reader = cmd.ExecuteReader();
                     reader.Read();
 
-                    categoryCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                    categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
                     connection.Close();
                 }
 
@@ -698,7 +666,7 @@ namespace Personal_Budget
             paidFromChart.Series.Add(paidFromSeries);
 
             //Adds data to Category chart
-            for (int i = 0; i < category.Length; i++)
+            for (int i = 0; i < category.Count; i++)
             {
                 categoryChart.Series[categorySeries].Points.AddXY(category[i], categoryCost[i]);
                 categoryChart.Series[categorySeries].Points[i].Label = category[i];
