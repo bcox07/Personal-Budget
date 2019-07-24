@@ -255,7 +255,7 @@
             this.monthChooser.FormattingEnabled = true;
             this.monthChooser.Location = new System.Drawing.Point(1285, 73);
             this.monthChooser.Name = "monthChooser";
-            this.monthChooser.Size = new System.Drawing.Size(189, 49);
+            this.monthChooser.Size = new System.Drawing.Size(189, 59);
             this.monthChooser.TabIndex = 11;
             this.monthChooser.SelectedIndexChanged += new System.EventHandler(this.monthChooser_SelectedIndexChanged);
             // 
@@ -278,10 +278,10 @@
             this.Controls.Add(this.label1);
             this.ForeColor = System.Drawing.Color.Maroon;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
             this.Name = "StatsWindow";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Statistics";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.StatsWindow_Load);
             ((System.ComponentModel.ISupportInitialize)(this.categoryChart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.monthChart)).EndInit();

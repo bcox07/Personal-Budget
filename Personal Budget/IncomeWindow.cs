@@ -16,12 +16,10 @@ namespace Personal_Budget
     {
         DataSet ds = new DataSet();
         String sql = "SELECT * FROM Income";
-        static String filePath = "C:\\Users\\brian\\source\\repos\\Personal Budget\\Budget.mdb";
         
-        static String connectionString = "Provider = Microsoft.Jet.OLEDB.4.0; Data Source = Budget.mdb";
+        static String connectionString = "Provider = Microsoft.Jet.OLEDB.4.0; Data Source = ..\\..\\Budget.mdb";
         OleDbConnection connection = new OleDbConnection(connectionString);
         OleDbDataAdapter dataadapter;
-        String sort = null;
 
         public IncomeWindow()
         {

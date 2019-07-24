@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Data.OleDb;
 
 namespace Personal_Budget
 {
@@ -15,10 +16,9 @@ namespace Personal_Budget
     {
         DataSet ds = new DataSet();
         static Connection dbConnection = new Connection();       
-        String sql = "SELECT * FROM BUDGET ORDER BY TransactionDate";
-        SqlConnection connection = new SqlConnection(dbConnection.getConnection());
-        SqlDataAdapter dataadapter;
-        String sort = null;
+        String sql = "SELECT * FROM Payments ORDER BY TransactionDate";
+        OleDbConnection connection = new OleDbConnection(dbConnection.getConnection());
+        OleDbDataAdapter dataadapter;
         
 
         public PaymentWindow()
@@ -34,7 +34,7 @@ namespace Personal_Budget
             transactionDatePicker.CustomFormat = "yyyy-MM-dd";
 
 
-            dataadapter = new SqlDataAdapter(sql, connection);
+            dataadapter = new OleDbDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();
@@ -144,14 +144,14 @@ namespace Personal_Budget
             }
 
             connection.Open();
-            SqlCommand cmd = new SqlCommand("SELECT TOP 1 TransactionID FROM BUDGET ORDER BY TransactionID DESC", connection);
-            SqlDataReader reader = cmd.ExecuteReader();
+            OleDbCommand cmd = new OleDbCommand("SELECT TOP 1 TransactionID FROM Payments ORDER BY TransactionID DESC", connection);
+            OleDbDataReader reader = cmd.ExecuteReader();
             reader.Read();
             temp = String.Format("{0}", reader["TransactionID"]);
             transactionID = Int32.Parse(temp) + 1;
             connection.Close();
             
-            cmd = new SqlCommand("INSERT INTO BUDGET VALUES (@TransactionID, @PaymentAccount, @Category, @Payment, @PaidTo, @TransactionDate, @TransactionMonth)", connection);
+            cmd = new OleDbCommand("INSERT INTO Payments VALUES (@TransactionID, @PaymentAccount, @Category, @Payment, @PaidTo, @TransactionDate, @TransactionMonth)", connection);
 
             connection.Open();
             cmd.Parameters.AddWithValue("@TransactionID", transactionID);
@@ -165,7 +165,7 @@ namespace Personal_Budget
             connection.Close();
 
             ds.Tables.Clear();
-            dataadapter = new SqlDataAdapter(sql, connection);
+            dataadapter = new OleDbDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();
@@ -202,7 +202,7 @@ namespace Personal_Budget
 
         private void updateBtn_Click(object sender, EventArgs e)
         {
-            SqlCommand cmd = new SqlCommand("UPDATE BUDGET SET PaymentAccount = @Account, Category = @Category, Payment = @Payment, PaidTo = @PaidTo, TransactionDate = @Date WHERE TransactionID =  @ID", connection);
+            OleDbCommand cmd = new OleDbCommand("UPDATE BUDGET SET PaymentAccount = @Account, Category = @Category, Payment = @Payment, PaidTo = @PaidTo, TransactionDate = @Date WHERE TransactionID =  @ID", connection);
             cmd.Parameters.AddWithValue("@Account", paymentAcctBox.Text);
             cmd.Parameters.AddWithValue("@Category", categoryBox.Text);
             cmd.Parameters.AddWithValue("@Payment", paymentBox.Text);
@@ -215,7 +215,7 @@ namespace Personal_Budget
             connection.Close();
 
             ds.Tables.Clear();
-            dataadapter = new SqlDataAdapter(sql, connection);
+            dataadapter = new OleDbDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();
@@ -225,7 +225,7 @@ namespace Personal_Budget
 
         private void deleteBtn_Click(object sender, EventArgs e)
         {
-            SqlCommand cmd = new SqlCommand("DELETE FROM BUDGET WHERE TransactionID = @TransactionID", connection);
+            OleDbCommand cmd = new OleDbCommand("DELETE FROM BUDGET WHERE TransactionID = @TransactionID", connection);
             cmd.Parameters.AddWithValue("@TransactionID", IDBox.Text);
 
             connection.Open();
@@ -233,7 +233,7 @@ namespace Personal_Budget
             connection.Close();
 
             ds.Tables.Clear();
-            dataadapter = new SqlDataAdapter(sql, connection);
+            dataadapter = new OleDbDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();
@@ -243,7 +243,7 @@ namespace Personal_Budget
         private void refreshBtn_Click(object sender, EventArgs e)
         {
             ds.Tables.Clear();
-            dataadapter = new SqlDataAdapter(sql, connection);
+            dataadapter = new OleDbDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();
