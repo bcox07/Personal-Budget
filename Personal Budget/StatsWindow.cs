@@ -110,7 +110,7 @@ namespace Personal_Budget
             //Fill monthIncome array
             for (i = 0; i < currMonthNum; i++)
             {
-                cmd = new OleDbCommand("SELECT Month, SUM(Payment) AS TotalIncome FROM INCOME WHERE Month = @Month GROUP BY Month", connection);
+                cmd = new OleDbCommand("SELECT IncomeMonth, SUM(Payment) AS TotalIncome FROM Income WHERE IncomeMonth = @Month GROUP BY IncomeMonth", connection);
                 cmd.Parameters.AddWithValue("@Month", month[i]);
 
 
@@ -121,6 +121,7 @@ namespace Personal_Budget
                 try
                 {
                     monthIncome[i] = String.Format("{0}", reader["TotalIncome"]);
+                    Console.WriteLine(monthIncome[i]);
                 }
                 catch (InvalidOperationException)
                 {
@@ -493,16 +494,18 @@ namespace Personal_Budget
                 }
 
             }
+            
             else
             {
+                /*
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 //CATEGORIES
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+                
                 connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY Category ORDER BY TotalPayment DESC", connection);
+                cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY Category ORDER BY SUM(Payments) DESC", connection);
                 cmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
                 cmd.ExecuteNonQuery();
 
@@ -530,15 +533,15 @@ namespace Personal_Budget
                     categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
                     connection.Close();
                 }
-
+                */
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 //PAID TO
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+                int i;
                 //Checks size of possible people paid to
                 connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                OleDbCommand paidToCmd = new OleDbCommand("SELECT COUNT(DISTINCT PaidTo) AS NumPaidTo FROM Payments WHERE TransactionMonth = @Month", connection);
+                OleDbCommand paidToCmd = new OleDbCommand("SELECT COUNT(PaidTo) AS NumPaidTo FROM (SELECT DISTINCT PaidTo FROM Payments WHERE TransactionMonth = @Month)", connection);
                 paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
 
 
@@ -560,7 +563,7 @@ namespace Personal_Budget
 
                 connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                paidToCmd = new OleDbCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
+                paidToCmd = new OleDbCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
                 paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
                 paidToCmd.ExecuteNonQuery();
 
@@ -578,7 +581,7 @@ namespace Personal_Budget
                 {
                     connection = new OleDbConnection(dbConnection.getConnection());
 
-                    paidToCmd = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE PaidTo = @PaidTo AND TransactionMonth = @Month GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
+                    paidToCmd = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE PaidTo = @PaidTo AND TransactionMonth = @Month GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
                     paidToCmd.Parameters.AddWithValue("@PaidTo", paidTo[i]);
                     paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
 
@@ -598,7 +601,7 @@ namespace Personal_Budget
                 //Checks size of possible people paid from
                 connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                OleDbCommand paidFromCmd = new OleDbCommand("SELECT COUNT(DISTINCT PaidFrom) AS NumPaidFrom FROM INCOME WHERE TransactionMonth = @Month", connection);
+                OleDbCommand paidFromCmd = new OleDbCommand("SELECT COUNT(PaidFrom) AS NumPaidFrom FROM (SELECT DISTINCT PaidFrom FROM Income WHERE IncomeMonth = @Month)", connection);
                 paidFromCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
 
 
@@ -620,7 +623,7 @@ namespace Personal_Budget
 
                 connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                paidFromCmd = new OleDbCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE TransactionMonth = @Month GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
+                paidFromCmd = new OleDbCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE IncomeMonth = @Month GROUP BY PaidFrom ORDER BY SUM(Payment) DESC", connection);
                 paidFromCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
                 paidFromCmd.ExecuteNonQuery();
 
@@ -638,7 +641,7 @@ namespace Personal_Budget
                 {
                     connection = new OleDbConnection(dbConnection.getConnection());
 
-                    paidFromCmd = new OleDbCommand("SELECT PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom AND TransactionMonth = @Month GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
+                    paidFromCmd = new OleDbCommand("SELECT PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom AND IncomeMonth = @Month GROUP BY PaidFrom ORDER BY SUM(Payment) DESC", connection);
                     paidFromCmd.Parameters.AddWithValue("@PaidFrom", paidFrom[i]);
                     paidFromCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
 

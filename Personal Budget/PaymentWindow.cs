@@ -225,7 +225,7 @@ namespace Personal_Budget
 
         private void deleteBtn_Click(object sender, EventArgs e)
         {
-            OleDbCommand cmd = new OleDbCommand("DELETE FROM BUDGET WHERE TransactionID = @TransactionID", connection);
+            OleDbCommand cmd = new OleDbCommand("DELETE FROM Payments WHERE TransactionID = @TransactionID", connection);
             cmd.Parameters.AddWithValue("@TransactionID", IDBox.Text);
 
             connection.Open();
