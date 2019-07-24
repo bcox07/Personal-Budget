@@ -8,16 +8,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Data.OleDb;
 
 namespace Personal_Budget
 {
     public partial class IncomeWindow : Form
     {
-        static Connection dbConnection = new Connection();
         DataSet ds = new DataSet();
-        String sql = "SELECT * FROM INCOME ORDER BY IncomeDate";
-        SqlConnection connection = new SqlConnection(dbConnection.getConnection());
-        SqlDataAdapter dataadapter;
+        String sql = "SELECT * FROM Income";
+        static String filePath = "C:\\Users\\brian\\source\\repos\\Personal Budget\\Budget.mdb";
+        
+        static String connectionString = "Provider = Microsoft.Jet.OLEDB.4.0; Data Source = Budget.mdb";
+        OleDbConnection connection = new OleDbConnection(connectionString);
+        OleDbDataAdapter dataadapter;
         String sort = null;
 
         public IncomeWindow()
@@ -32,7 +35,7 @@ namespace Personal_Budget
             transactionDatePicker.Format = DateTimePickerFormat.Custom;
             transactionDatePicker.CustomFormat = "yyyy-MM-dd";
 
-            dataadapter = new SqlDataAdapter(sql, connection);
+            dataadapter = new OleDbDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Income");
             connection.Close();
@@ -105,8 +108,8 @@ namespace Personal_Budget
             }
 
             connection.Open();
-            SqlCommand cmd = new SqlCommand("SELECT TOP 1 IncomeID FROM INCOME ORDER BY IncomeID DESC", connection);
-            SqlDataReader reader = cmd.ExecuteReader();
+            OleDbCommand cmd = new OleDbCommand("SELECT TOP 1 IncomeID FROM INCOME ORDER BY IncomeID DESC", connection);
+            OleDbDataReader reader = cmd.ExecuteReader();
             reader.Read();
             try
             {
@@ -121,7 +124,7 @@ namespace Personal_Budget
             
 
             connection.Open();
-            cmd = new SqlCommand("INSERT INTO INCOME VALUES (@IncomeID, @PaidFrom, @Payment, @IncomeDate, @IncomeMonth)", connection);
+            cmd = new OleDbCommand("INSERT INTO INCOME VALUES (@IncomeID, @PaidFrom, @Payment, @IncomeDate, @IncomeMonth)", connection);
             cmd.Parameters.AddWithValue("@IncomeID", incomeID);
             cmd.Parameters.AddWithValue("@PaidFrom", paidFrom);
             cmd.Parameters.AddWithValue("@Payment", payment); 
@@ -132,7 +135,7 @@ namespace Personal_Budget
             connection.Close();
 
             ds.Tables.Clear();
-            dataadapter = new SqlDataAdapter(sql, connection);
+            dataadapter = new OleDbDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Income");
             connection.Close();
@@ -144,7 +147,7 @@ namespace Personal_Budget
 
         private void deleteBtn_Click(object sender, EventArgs e)
         {
-            SqlCommand cmd = new SqlCommand("DELETE FROM INCOME WHERE IncomeID = @IncomeID", connection);
+            OleDbCommand cmd = new OleDbCommand("DELETE FROM INCOME WHERE IncomeID = @IncomeID", connection);
             cmd.Parameters.AddWithValue("@IncomeID", IDBox.Text);
 
             connection.Open();
@@ -152,7 +155,7 @@ namespace Personal_Budget
             connection.Close();
 
             ds.Tables.Clear();
-            dataadapter = new SqlDataAdapter(sql, connection);
+            dataadapter = new OleDbDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Income");
             connection.Close();
@@ -215,7 +218,7 @@ namespace Personal_Budget
         {
             DateTime monthDate;
 
-            SqlCommand cmd = new SqlCommand("UPDATE INCOME SET PaidFrom = @PaidFrom, Payment = @Payment, IncomeDate = @Date, TransactionMonth = @Month WHERE IncomeID =  @ID", connection);
+            OleDbCommand cmd = new OleDbCommand("UPDATE INCOME SET PaidFrom = @PaidFrom, Payment = @Payment, IncomeDate = @Date, TransactionMonth = @Month WHERE IncomeID =  @ID", connection);
                         
             monthDate = Convert.ToDateTime(transactionDatePicker.Text);
             String month = "";
@@ -272,7 +275,7 @@ namespace Personal_Budget
             connection.Close();
 
             ds.Tables.Clear();
-            dataadapter = new SqlDataAdapter(sql, connection);
+            dataadapter = new OleDbDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Income");
             connection.Close();
@@ -295,7 +298,7 @@ namespace Personal_Budget
         private void refreshBtn_Click(object sender, EventArgs e)
         {
             ds.Tables.Clear();
-            dataadapter = new SqlDataAdapter(sql, connection);
+            dataadapter = new OleDbDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Income");
             connection.Close();

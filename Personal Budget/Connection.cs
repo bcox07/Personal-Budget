@@ -9,7 +9,7 @@ namespace Personal_Budget
 
     class Connection
     {
-        public String connectionString = "Data Source=BRIAN-DESKTOP; Initial Catalog=Budget; Integrated Security=True;";
+        public String connectionString = "Provider = Microsoft.Jet.OLEDB.4.0; Data Source = Budget.mdb";
         public String getConnection()
         {
             return connectionString;

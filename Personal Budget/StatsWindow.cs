@@ -10,16 +10,17 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Threading;
+using System.Data.OleDb;
 
 namespace Personal_Budget
 {
     public partial class StatsWindow : Form
     {       
         static Connection dbConnection = new Connection();
-        SqlConnection connection = new SqlConnection(dbConnection.getConnection());
+        OleDbConnection connection = new OleDbConnection(dbConnection.getConnection());
 
-        SqlCommand cmd, cmd2;
-        SqlDataReader reader, reader2;
+        OleDbCommand cmd, cmd2;
+        OleDbDataReader reader, reader2;
 
         private Color autumn = Color.FromArgb(118, 54, 38);
         private Color mist = Color.FromArgb(144, 175, 197);
@@ -84,9 +85,10 @@ namespace Personal_Budget
 
 
             //Fill monthCost array
+
             for (i = 0; i < currMonthNum; i++)
             {
-                cmd = new SqlCommand("SELECT TransactionMonth, SUM(Payment) AS TotalPayment FROM BUDGET WHERE TransactionMonth = @Month GROUP BY TransactionMonth", connection);
+                cmd = new OleDbCommand("SELECT TransactionMonth, SUM(Payment) AS TotalPayment FROM BUDGET WHERE TransactionMonth = @Month GROUP BY TransactionMonth", connection);
                 cmd.Parameters.AddWithValue("@Month", month[i]);
 
 
@@ -108,7 +110,7 @@ namespace Personal_Budget
             //Fill monthIncome array
             for (i = 0; i < currMonthNum; i++)
             {
-                cmd = new SqlCommand("SELECT TransactionMonth, SUM(Payment) AS TotalIncome FROM INCOME WHERE TransactionMonth = @Month GROUP BY TransactionMonth", connection);
+                cmd = new OleDbCommand("SELECT TransactionMonth, SUM(Payment) AS TotalIncome FROM INCOME WHERE TransactionMonth = @Month GROUP BY TransactionMonth", connection);
                 cmd.Parameters.AddWithValue("@Month", month[i]);
 
 
@@ -132,7 +134,7 @@ namespace Personal_Budget
 
             //Fill category array
             connection.Open();
-            cmd = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY Category ORDER BY TotalPayment DESC", connection);
+            cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY Category ORDER BY TotalPayment DESC", connection);
             reader = cmd.ExecuteReader();
 
             while (reader.Read())
@@ -145,8 +147,8 @@ namespace Personal_Budget
 
             //Fill paidTo and paidFrom array
             connection.Open();
-            cmd = new SqlCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
-            cmd2 = new SqlCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM Income GROUP BY PaidFRom ORDER BY TotalPayment DESC", connection);
+            cmd = new OleDbCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
+            cmd2 = new OleDbCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM Income GROUP BY PaidFRom ORDER BY TotalPayment DESC", connection);
             reader = cmd.ExecuteReader();
 
 
@@ -172,7 +174,7 @@ namespace Personal_Budget
             //Fill paidToCost array
             for (i = 0; i < numPaidTo; i++)
             {
-                cmd = new SqlCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET WHERE PaidTo = @PaidTo GROUP BY PaidTo", connection);
+                cmd = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET WHERE PaidTo = @PaidTo GROUP BY PaidTo", connection);
                 cmd.Parameters.AddWithValue("@PaidTo", paidTo[i]);
 
 
@@ -188,7 +190,7 @@ namespace Personal_Budget
             //Fill paidFromCost array
             for (i = 0; i < numPaidFrom; i++)
             {
-                cmd2 = new SqlCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom GROUP BY PaidFrom", connection);
+                cmd2 = new OleDbCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom GROUP BY PaidFrom", connection);
                 cmd2.Parameters.AddWithValue("@PaidFrom", paidFrom[i]);
 
                 connection.Open();
@@ -204,7 +206,7 @@ namespace Personal_Budget
             for (i = 0; i < category.Count; i++)
             {
 
-                cmd = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE CATEGORY = @Category GROUP BY Category", connection);
+                cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE CATEGORY = @Category GROUP BY Category", connection);
                 cmd.Parameters.AddWithValue("@Category", category[i]);
 
                 connection.Open();
@@ -400,14 +402,14 @@ namespace Personal_Budget
             paidFrom = new string[8];
 
             String temp;
-            SqlConnection connection = new SqlConnection(dbConnection.getConnection());
-            SqlDataReader reader;
+            OleDbConnection connection = new OleDbConnection(dbConnection.getConnection());
+            OleDbDataReader reader;
             
             if (monthChooser.SelectedItem.Equals("Total"))
             {
                 //Total Category Chart
                 connection.Open();
-                SqlCommand cmd1 = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY Category ORDER BY TotalPayment DESC", connection);
+                OleDbCommand cmd1 = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY Category ORDER BY TotalPayment DESC", connection);
                 reader = cmd1.ExecuteReader();
 
                 int i = 0;
@@ -420,9 +422,9 @@ namespace Personal_Budget
 
                 for (i = 0; i < category.Count; i++)
                 {
-                    connection = new SqlConnection(dbConnection.getConnection());
+                    connection = new OleDbConnection(dbConnection.getConnection());
 
-                    cmd1 = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE CATEGORY = @Category GROUP BY Category ORDER BY TotalPayment DESC", connection);
+                    cmd1 = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE CATEGORY = @Category GROUP BY Category ORDER BY TotalPayment DESC", connection);
                     cmd1.Parameters.AddWithValue("@Category", category[i]);
 
                     connection.Open();
@@ -436,7 +438,7 @@ namespace Personal_Budget
 
                 //Total PaidTo Chart
                 connection.Open();
-                cmd1 = new SqlCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
+                cmd1 = new OleDbCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
                 reader = cmd1.ExecuteReader();
 
                 i = 0;
@@ -449,9 +451,9 @@ namespace Personal_Budget
 
                 for (i = 0; i < paidTo.Length; i++)
                 {
-                    connection = new SqlConnection(dbConnection.getConnection());
+                    connection = new OleDbConnection(dbConnection.getConnection());
 
-                    cmd1 = new SqlCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET WHERE PaidTo = @PaidTo GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
+                    cmd1 = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET WHERE PaidTo = @PaidTo GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
                     cmd1.Parameters.AddWithValue("@PaidTo", paidTo[i]);
 
                     connection.Open();
@@ -465,7 +467,7 @@ namespace Personal_Budget
 
                 //Total PaidFrom Chart
                 connection.Open();
-                cmd1 = new SqlCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
+                cmd1 = new OleDbCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
                 reader = cmd1.ExecuteReader();
 
                 i = 0;
@@ -478,9 +480,9 @@ namespace Personal_Budget
 
                 for (i = 0; i < paidFrom.Length; i++)
                 {
-                    connection = new SqlConnection(dbConnection.getConnection());
+                    connection = new OleDbConnection(dbConnection.getConnection());
 
-                    cmd1 = new SqlCommand("SELECT PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
+                    cmd1 = new OleDbCommand("SELECT PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
                     cmd1.Parameters.AddWithValue("@PaidFrom", paidFrom[i]);
 
                     connection.Open();
@@ -500,9 +502,9 @@ namespace Personal_Budget
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-                connection = new SqlConnection(dbConnection.getConnection());
+                connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                cmd = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE TransactionMonth = @Month GROUP BY Category ORDER BY TotalPayment DESC", connection);
+                cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE TransactionMonth = @Month GROUP BY Category ORDER BY TotalPayment DESC", connection);
                 cmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
                 cmd.ExecuteNonQuery();
 
@@ -516,9 +518,9 @@ namespace Personal_Budget
                 int i;
                 for (i = 0; i < category.Count; i++)
                 {
-                    connection = new SqlConnection(dbConnection.getConnection());
+                    connection = new OleDbConnection(dbConnection.getConnection());
 
-                    cmd = new SqlCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE CATEGORY = @Category AND TransactionMonth = @Month GROUP BY Category ORDER BY TotalPayment DESC", connection);
+                    cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM BUDGET WHERE CATEGORY = @Category AND TransactionMonth = @Month GROUP BY Category ORDER BY TotalPayment DESC", connection);
                     cmd.Parameters.AddWithValue("@Category", category[i]);
                     cmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
 
@@ -536,9 +538,9 @@ namespace Personal_Budget
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
                 //Checks size of possible people paid to
-                connection = new SqlConnection(dbConnection.getConnection());
+                connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                SqlCommand paidToCmd = new SqlCommand("SELECT COUNT(DISTINCT PaidTo) AS NumPaidTo FROM BUDGET WHERE TransactionMonth = @Month", connection);
+                OleDbCommand paidToCmd = new OleDbCommand("SELECT COUNT(DISTINCT PaidTo) AS NumPaidTo FROM BUDGET WHERE TransactionMonth = @Month", connection);
                 paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
 
 
@@ -558,9 +560,9 @@ namespace Personal_Budget
                 connection.Close();
 
 
-                connection = new SqlConnection(dbConnection.getConnection());
+                connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                paidToCmd = new SqlCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET WHERE TransactionMonth = @Month GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
+                paidToCmd = new OleDbCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET WHERE TransactionMonth = @Month GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
                 paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
                 paidToCmd.ExecuteNonQuery();
 
@@ -576,9 +578,9 @@ namespace Personal_Budget
 
                 for (i = 0; i < paidTo.Length; i++)
                 {
-                    connection = new SqlConnection(dbConnection.getConnection());
+                    connection = new OleDbConnection(dbConnection.getConnection());
 
-                    paidToCmd = new SqlCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET WHERE PaidTo = @PaidTo AND TransactionMonth = @Month GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
+                    paidToCmd = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM BUDGET WHERE PaidTo = @PaidTo AND TransactionMonth = @Month GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
                     paidToCmd.Parameters.AddWithValue("@PaidTo", paidTo[i]);
                     paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
 
@@ -596,9 +598,9 @@ namespace Personal_Budget
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
                 //Checks size of possible people paid from
-                connection = new SqlConnection(dbConnection.getConnection());
+                connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                SqlCommand paidFromCmd = new SqlCommand("SELECT COUNT(DISTINCT PaidFrom) AS NumPaidFrom FROM INCOME WHERE TransactionMonth = @Month", connection);
+                OleDbCommand paidFromCmd = new OleDbCommand("SELECT COUNT(DISTINCT PaidFrom) AS NumPaidFrom FROM INCOME WHERE TransactionMonth = @Month", connection);
                 paidFromCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
 
 
@@ -618,9 +620,9 @@ namespace Personal_Budget
                 connection.Close();
 
 
-                connection = new SqlConnection(dbConnection.getConnection());
+                connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                paidFromCmd = new SqlCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE TransactionMonth = @Month GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
+                paidFromCmd = new OleDbCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE TransactionMonth = @Month GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
                 paidFromCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
                 paidFromCmd.ExecuteNonQuery();
 
@@ -636,9 +638,9 @@ namespace Personal_Budget
 
                 for (i = 0; i < paidFrom.Length; i++)
                 {
-                    connection = new SqlConnection(dbConnection.getConnection());
+                    connection = new OleDbConnection(dbConnection.getConnection());
 
-                    paidFromCmd = new SqlCommand("SELECT PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom AND TransactionMonth = @Month GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
+                    paidFromCmd = new OleDbCommand("SELECT PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom AND TransactionMonth = @Month GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
                     paidFromCmd.Parameters.AddWithValue("@PaidFrom", paidFrom[i]);
                     paidFromCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
 
