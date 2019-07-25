@@ -121,7 +121,6 @@ namespace Personal_Budget
                 try
                 {
                     monthIncome[i] = String.Format("{0}", reader["TotalIncome"]);
-                    Console.WriteLine(monthIncome[i]);
                 }
                 catch (InvalidOperationException)
                 {
@@ -151,13 +150,11 @@ namespace Personal_Budget
             cmd = new OleDbCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM Payments GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
             cmd2 = new OleDbCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM Income GROUP BY PaidFRom ORDER BY SUM(Payment) DESC", connection);
             reader = cmd.ExecuteReader();
-            Console.WriteLine(numPaidTo);
 
             i = 0;
             while (reader.Read())
             {
                 paidTo[i] = String.Format("{0}", reader["PaidTo"]);
-                Console.WriteLine(paidTo[i]);
                 i++;
             }
             connection.Close();
@@ -497,47 +494,53 @@ namespace Personal_Budget
             
             else
             {
-                /*
+
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 //CATEGORIES
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                category.Clear();
+                categoryCost.Clear();
 
-                
                 connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY Category ORDER BY SUM(Payments) DESC", connection);
+                cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY Category ORDER BY SUM(Payment) DESC", connection);
                 cmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
                 cmd.ExecuteNonQuery();
 
                 reader = cmd.ExecuteReader();
 
+                int i = 0;
                 while (reader.Read())
                 {
                     category.Add(String.Format("{0}", reader["Category"]));
+                    i++;
+                    
                 }
                 connection.Close();
-                int i;
-                for (i = 0; i < category.Count; i++)
+
+
+                connection = new OleDbConnection(dbConnection.getConnection());
+
+                cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY Category ORDER BY SUM(Payment) DESC", connection);
+                cmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+                connection.Open();
+                cmd.ExecuteNonQuery();
+                reader = cmd.ExecuteReader();
+
+                i = 0;
+                while (reader.Read())
                 {
-                    connection = new OleDbConnection(dbConnection.getConnection());
-
-                    cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE CATEGORY = @Category AND TransactionMonth = @Month GROUP BY Category ORDER BY TotalPayment DESC", connection);
-                    cmd.Parameters.AddWithValue("@Category", category[i]);
-                    cmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
-
-                    connection.Open();
-                    cmd.ExecuteNonQuery();
-                    reader = cmd.ExecuteReader();
-                    reader.Read();
-
                     categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
-                    connection.Close();
+                    Console.WriteLine(categoryCost[i]);
+                    i++;
                 }
-                */
+                connection.Close();
+
+
+
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 //PAID TO
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                int i;
                 //Checks size of possible people paid to
                 connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();

@@ -202,7 +202,14 @@ namespace Personal_Budget
 
         private void updateBtn_Click(object sender, EventArgs e)
         {
-            OleDbCommand cmd = new OleDbCommand("UPDATE BUDGET SET PaymentAccount = @Account, Category = @Category, Payment = @Payment, PaidTo = @PaidTo, TransactionDate = @Date WHERE TransactionID =  @ID", connection);
+            Console.WriteLine(paymentAcctBox.Text);
+            Console.WriteLine(categoryBox.Text);
+            Console.WriteLine(paymentBox.Text);
+            Console.WriteLine(paidToBox.Text);
+            Console.WriteLine(transactionDatePicker.Text);
+            Console.WriteLine(IDBox.Text);
+
+            OleDbCommand cmd = new OleDbCommand("UPDATE Payments SET Account = @Account, Category = @Category, Payment = @Payment, PaidTo = @PaidTo, TransactionDate = @Date WHERE TransactionID =  @ID", connection);
             cmd.Parameters.AddWithValue("@Account", paymentAcctBox.Text);
             cmd.Parameters.AddWithValue("@Category", categoryBox.Text);
             cmd.Parameters.AddWithValue("@Payment", paymentBox.Text);
