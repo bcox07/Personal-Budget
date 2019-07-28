@@ -34,7 +34,6 @@
             this.paymentAcctBox = new System.Windows.Forms.TextBox();
             this.paidToBox = new System.Windows.Forms.TextBox();
             this.paymentBox = new System.Windows.Forms.TextBox();
-            this.categoryBox = new System.Windows.Forms.TextBox();
             this.transactionDatePicker = new System.Windows.Forms.DateTimePicker();
             this.accountLabel = new System.Windows.Forms.Label();
             this.paidToLbl = new System.Windows.Forms.Label();
@@ -46,6 +45,8 @@
             this.IDBox = new System.Windows.Forms.TextBox();
             this.deleteBtn = new System.Windows.Forms.Button();
             this.dateLbl = new System.Windows.Forms.Label();
+            this.categoryBox = new System.Windows.Forms.ComboBox();
+            this.searchBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.budgetGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -57,7 +58,7 @@
             this.transactionBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
             this.transactionBtn.Location = new System.Drawing.Point(12, 447);
             this.transactionBtn.Name = "transactionBtn";
-            this.transactionBtn.Size = new System.Drawing.Size(195, 70);
+            this.transactionBtn.Size = new System.Drawing.Size(215, 70);
             this.transactionBtn.TabIndex = 0;
             this.transactionBtn.Text = "ADD";
             this.transactionBtn.UseVisualStyleBackColor = false;
@@ -67,9 +68,9 @@
             // 
             this.budgetGridView.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
             this.budgetGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.budgetGridView.Location = new System.Drawing.Point(446, 12);
+            this.budgetGridView.Location = new System.Drawing.Point(454, 12);
             this.budgetGridView.Name = "budgetGridView";
-            this.budgetGridView.Size = new System.Drawing.Size(761, 581);
+            this.budgetGridView.Size = new System.Drawing.Size(758, 659);
             this.budgetGridView.TabIndex = 1;
             this.budgetGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.budgetGridView_CellClick);
             // 
@@ -78,7 +79,7 @@
             this.paymentAcctBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.paymentAcctBox.Location = new System.Drawing.Point(221, 104);
             this.paymentAcctBox.Name = "paymentAcctBox";
-            this.paymentAcctBox.Size = new System.Drawing.Size(206, 31);
+            this.paymentAcctBox.Size = new System.Drawing.Size(222, 31);
             this.paymentAcctBox.TabIndex = 2;
             // 
             // paidToBox
@@ -86,7 +87,7 @@
             this.paidToBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.paidToBox.Location = new System.Drawing.Point(221, 310);
             this.paidToBox.Name = "paidToBox";
-            this.paidToBox.Size = new System.Drawing.Size(206, 31);
+            this.paidToBox.Size = new System.Drawing.Size(222, 31);
             this.paidToBox.TabIndex = 5;
             // 
             // paymentBox
@@ -94,23 +95,15 @@
             this.paymentBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.paymentBox.Location = new System.Drawing.Point(221, 242);
             this.paymentBox.Name = "paymentBox";
-            this.paymentBox.Size = new System.Drawing.Size(206, 31);
+            this.paymentBox.Size = new System.Drawing.Size(222, 31);
             this.paymentBox.TabIndex = 4;
-            // 
-            // categoryBox
-            // 
-            this.categoryBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.categoryBox.Location = new System.Drawing.Point(221, 173);
-            this.categoryBox.Name = "categoryBox";
-            this.categoryBox.Size = new System.Drawing.Size(206, 31);
-            this.categoryBox.TabIndex = 3;
             // 
             // transactionDatePicker
             // 
             this.transactionDatePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.transactionDatePicker.Location = new System.Drawing.Point(221, 379);
             this.transactionDatePicker.Name = "transactionDatePicker";
-            this.transactionDatePicker.Size = new System.Drawing.Size(206, 31);
+            this.transactionDatePicker.Size = new System.Drawing.Size(222, 31);
             this.transactionDatePicker.TabIndex = 6;
             // 
             // accountLabel
@@ -163,9 +156,9 @@
             this.backBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.backBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.backBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.backBtn.Location = new System.Drawing.Point(12, 523);
+            this.backBtn.Location = new System.Drawing.Point(12, 600);
             this.backBtn.Name = "backBtn";
-            this.backBtn.Size = new System.Drawing.Size(195, 71);
+            this.backBtn.Size = new System.Drawing.Size(431, 71);
             this.backBtn.TabIndex = 12;
             this.backBtn.Text = "BACK";
             this.backBtn.UseVisualStyleBackColor = false;
@@ -177,7 +170,7 @@
             this.updateBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.updateBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.updateBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.updateBtn.Location = new System.Drawing.Point(219, 447);
+            this.updateBtn.Location = new System.Drawing.Point(233, 447);
             this.updateBtn.Name = "updateBtn";
             this.updateBtn.Size = new System.Drawing.Size(210, 70);
             this.updateBtn.TabIndex = 13;
@@ -201,7 +194,7 @@
             this.IDBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.IDBox.Location = new System.Drawing.Point(221, 35);
             this.IDBox.Name = "IDBox";
-            this.IDBox.Size = new System.Drawing.Size(206, 31);
+            this.IDBox.Size = new System.Drawing.Size(222, 31);
             this.IDBox.TabIndex = 14;
             // 
             // deleteBtn
@@ -210,7 +203,7 @@
             this.deleteBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.deleteBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.deleteBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.deleteBtn.Location = new System.Drawing.Point(219, 523);
+            this.deleteBtn.Location = new System.Drawing.Point(233, 523);
             this.deleteBtn.Name = "deleteBtn";
             this.deleteBtn.Size = new System.Drawing.Size(210, 70);
             this.deleteBtn.TabIndex = 16;
@@ -229,13 +222,38 @@
             this.dateLbl.TabIndex = 18;
             this.dateLbl.Text = "Date";
             // 
+            // categoryBox
+            // 
+            this.categoryBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.categoryBox.FormattingEnabled = true;
+            this.categoryBox.Location = new System.Drawing.Point(221, 171);
+            this.categoryBox.Name = "categoryBox";
+            this.categoryBox.Size = new System.Drawing.Size(222, 33);
+            this.categoryBox.TabIndex = 19;
+            // 
+            // searchBtn
+            // 
+            this.searchBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
+            this.searchBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.searchBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.searchBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
+            this.searchBtn.Location = new System.Drawing.Point(12, 523);
+            this.searchBtn.Name = "searchBtn";
+            this.searchBtn.Size = new System.Drawing.Size(215, 70);
+            this.searchBtn.TabIndex = 20;
+            this.searchBtn.Text = "SEARCH";
+            this.searchBtn.UseVisualStyleBackColor = false;
+            this.searchBtn.Click += new System.EventHandler(this.SearchBtn_Click);
+            // 
             // PaymentWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(107)))), ((int)(((byte)(135)))));
-            this.ClientSize = new System.Drawing.Size(1219, 605);
+            this.ClientSize = new System.Drawing.Size(1225, 683);
             this.ControlBox = false;
+            this.Controls.Add(this.searchBtn);
+            this.Controls.Add(this.categoryBox);
             this.Controls.Add(this.dateLbl);
             this.Controls.Add(this.deleteBtn);
             this.Controls.Add(this.IDLbl);
@@ -247,7 +265,6 @@
             this.Controls.Add(this.paidToLbl);
             this.Controls.Add(this.accountLabel);
             this.Controls.Add(this.transactionDatePicker);
-            this.Controls.Add(this.categoryBox);
             this.Controls.Add(this.paymentBox);
             this.Controls.Add(this.paidToBox);
             this.Controls.Add(this.paymentAcctBox);
@@ -270,7 +287,6 @@
         private System.Windows.Forms.TextBox paymentAcctBox;
         private System.Windows.Forms.TextBox paidToBox;
         private System.Windows.Forms.TextBox paymentBox;
-        private System.Windows.Forms.TextBox categoryBox;
         private System.Windows.Forms.DateTimePicker transactionDatePicker;
         private System.Windows.Forms.Label accountLabel;
         private System.Windows.Forms.Label paidToLbl;
@@ -282,6 +298,8 @@
         private System.Windows.Forms.TextBox IDBox;
         private System.Windows.Forms.Button deleteBtn;
         private System.Windows.Forms.Label dateLbl;
+        private System.Windows.Forms.ComboBox categoryBox;
+        private System.Windows.Forms.Button searchBtn;
     }
 }
 

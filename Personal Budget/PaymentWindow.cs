@@ -41,6 +41,18 @@ namespace Personal_Budget
             budgetGridView.DataSource = ds.Tables[0];
 
             budgetGridView.Columns[3].DefaultCellStyle.Format = "C";
+
+            categoryBox.Items.Add("Auto");
+            categoryBox.Items.Add("Dining");
+            categoryBox.Items.Add("Entertainment");
+            categoryBox.Items.Add("Gas");
+            categoryBox.Items.Add("Grocery");
+            categoryBox.Items.Add("Healthcare");
+            categoryBox.Items.Add("Interest");
+            categoryBox.Items.Add("Online");
+            categoryBox.Items.Add("Other");
+            categoryBox.Items.Add("Phone");
+            categoryBox.Items.Add("Rent");
         }
 
         private void budgetGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -95,7 +107,7 @@ namespace Personal_Budget
             account = category = paidTo = temp = date = month = "";
 
             account = paymentAcctBox.Text;
-            category = categoryBox.Text;
+            category = categoryBox.SelectedText;
             temp = paymentBox.Text;
             payment = Convert.ToDouble(temp);
             paidTo = paidToBox.Text;
@@ -251,6 +263,54 @@ namespace Personal_Budget
         {
             ds.Tables.Clear();
             dataadapter = new OleDbDataAdapter(sql, connection);
+            connection.Open();
+            dataadapter.Fill(ds, "Budget");
+            connection.Close();
+            budgetGridView.DataSource = ds.Tables[0];
+        }
+
+        private void SearchBtn_Click(object sender, EventArgs e)
+        {
+            Boolean pAcctBoxCheck, cBoxCheck, pBoxCheck;
+            pAcctBoxCheck = cBoxCheck = pBoxCheck = false;
+            String srch = "SELECT * FROM Payments WHERE ";
+            if (paymentAcctBox.Text.Length > 0)
+            {
+                pAcctBoxCheck = true;
+                srch += "Account = '" + paymentAcctBox.Text + "' ";
+                Console.WriteLine(srch);
+            }
+            if (categoryBox.SelectedIndex != -1 && pAcctBoxCheck == true)
+            {
+                cBoxCheck = true;
+                srch += "AND Category = '" + categoryBox.Text + "' ";
+            }
+            else if (categoryBox.SelectedIndex != -1)
+            {
+                cBoxCheck = true;
+                srch += "Category = '" + categoryBox.Text + "' ";
+            }
+            if (paymentBox.Text.Length > 0 && (pAcctBoxCheck == true || cBoxCheck == true))
+            {
+                pBoxCheck = true;
+                srch += "AND Payment = " + paymentBox.Text + " ";
+            }
+            else if (paymentBox.Text.Length > 0)
+            {
+                pBoxCheck = true;
+                srch += "Payment = " + paymentBox.Text + " ";
+            }
+            if (paidToBox.Text.Length > 0 && (pAcctBoxCheck == true || cBoxCheck == true || pBoxCheck == true))
+            {
+                srch += "AND PaidTo = '" + paidToBox.Text + "'";
+            }
+            else if (paidToBox.Text.Length > 0)
+            {
+                srch += "PaidTo = '" + paidToBox.Text + "'";
+            }
+
+            ds.Tables.Clear();
+            dataadapter = new OleDbDataAdapter(srch, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();

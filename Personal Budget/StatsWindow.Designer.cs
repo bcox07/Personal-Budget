@@ -108,7 +108,7 @@
             this.monthBtn.Name = "monthBtn";
             this.monthBtn.Size = new System.Drawing.Size(283, 90);
             this.monthBtn.TabIndex = 3;
-            this.monthBtn.Text = "MONTH";
+            this.monthBtn.Text = "MONTHLY";
             this.monthBtn.UseVisualStyleBackColor = false;
             this.monthBtn.Click += new System.EventHandler(this.monthBtn_Click);
             // 
@@ -123,7 +123,7 @@
             this.paidToBtn.Name = "paidToBtn";
             this.paidToBtn.Size = new System.Drawing.Size(283, 90);
             this.paidToBtn.TabIndex = 4;
-            this.paidToBtn.Text = "PAID TO";
+            this.paidToBtn.Text = "PAYMENTS";
             this.paidToBtn.UseVisualStyleBackColor = false;
             this.paidToBtn.Click += new System.EventHandler(this.paidToBtn_Click);
             // 
@@ -140,12 +140,12 @@
             legend1.Name = "Legend1";
             legend1.TableStyle = System.Windows.Forms.DataVisualization.Charting.LegendTableStyle.Wide;
             this.monthChart.Legends.Add(legend1);
-            this.monthChart.Location = new System.Drawing.Point(267, -14);
+            this.monthChart.Location = new System.Drawing.Point(268, -9);
             this.monthChart.Name = "monthChart";
             this.monthChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
             this.monthChart.PaletteCustomColors = new System.Drawing.Color[] {
         System.Drawing.Color.DeepSkyBlue};
-            this.monthChart.Size = new System.Drawing.Size(1290, 1089);
+            this.monthChart.Size = new System.Drawing.Size(1290, 1000);
             this.monthChart.TabIndex = 5;
             this.monthChart.Text = "chart1";
             // 
@@ -216,7 +216,7 @@
             this.paidFromBtn.Name = "paidFromBtn";
             this.paidFromBtn.Size = new System.Drawing.Size(283, 90);
             this.paidFromBtn.TabIndex = 9;
-            this.paidFromBtn.Text = "PAID FROM";
+            this.paidFromBtn.Text = "INCOME";
             this.paidFromBtn.UseVisualStyleBackColor = false;
             this.paidFromBtn.Click += new System.EventHandler(this.paidFromBtn_Click);
             // 

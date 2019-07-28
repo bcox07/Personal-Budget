@@ -405,7 +405,7 @@ namespace Personal_Budget
             {
                 //Total Category Chart
                 connection.Open();
-                OleDbCommand cmd1 = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments GROUP BY Category ORDER BY TotalPayment DESC", connection);
+                OleDbCommand cmd1 = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments GROUP BY Category ORDER BY SUM(Payment) DESC", connection);
                 reader = cmd1.ExecuteReader();
 
                 int i = 0;
@@ -420,7 +420,7 @@ namespace Personal_Budget
                 {
                     connection = new OleDbConnection(dbConnection.getConnection());
 
-                    cmd1 = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE CATEGORY = @Category GROUP BY Category ORDER BY TotalPayment DESC", connection);
+                    cmd1 = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE CATEGORY = @Category GROUP BY Category ORDER BY SUM(Payment) DESC", connection);
                     cmd1.Parameters.AddWithValue("@Category", category[i]);
 
                     connection.Open();
@@ -434,7 +434,7 @@ namespace Personal_Budget
 
                 //Total PaidTo Chart
                 connection.Open();
-                cmd1 = new OleDbCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM Payments GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
+                cmd1 = new OleDbCommand("SELECT TOP 8 PaidTo, SUM(Payment) AS TotalPayment FROM Payments GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
                 reader = cmd1.ExecuteReader();
 
                 i = 0;
@@ -449,7 +449,7 @@ namespace Personal_Budget
                 {
                     connection = new OleDbConnection(dbConnection.getConnection());
 
-                    cmd1 = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE PaidTo = @PaidTo GROUP BY PaidTo ORDER BY TotalPayment DESC", connection);
+                    cmd1 = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE PaidTo = @PaidTo GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
                     cmd1.Parameters.AddWithValue("@PaidTo", paidTo[i]);
 
                     connection.Open();
@@ -463,7 +463,7 @@ namespace Personal_Budget
 
                 //Total PaidFrom Chart
                 connection.Open();
-                cmd1 = new OleDbCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
+                cmd1 = new OleDbCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME GROUP BY PaidFrom ORDER BY SUM(Payment) DESC", connection);
                 reader = cmd1.ExecuteReader();
 
                 i = 0;
@@ -478,7 +478,7 @@ namespace Personal_Budget
                 {
                     connection = new OleDbConnection(dbConnection.getConnection());
 
-                    cmd1 = new OleDbCommand("SELECT PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom GROUP BY PaidFrom ORDER BY TotalPayment DESC", connection);
+                    cmd1 = new OleDbCommand("SELECT PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom GROUP BY PaidFrom ORDER BY SUM(Payment) DESC", connection);
                     cmd1.Parameters.AddWithValue("@PaidFrom", paidFrom[i]);
 
                     connection.Open();
