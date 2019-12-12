@@ -51,13 +51,114 @@ namespace Personal_Budget
             InitializeComponent();
         }
 
+        public String GetEarliestPayment()
+        {
+            String temp = "";
+            //Earliest Payment date
+            cmd = new OleDbCommand("SELECT  TOP 1 TransactionDate FROM Payments ORDER BY TransactionDate", connection);
+            connection.Open();
+            cmd.ExecuteNonQuery();
+            reader = cmd.ExecuteReader();
+            reader.Read();
+
+            temp = String.Format("{0}", reader["TransactionDate"]);
+            connection.Close();
+            return temp;
+        }
+
+        public String GetEarliestIncome()
+        {
+            String temp = "";
+            //Earliest Income date
+            cmd = new OleDbCommand("SELECT  TOP 1 IncomeDate FROM Income ORDER BY IncomeDate", connection);
+            connection.Open();
+            cmd.ExecuteNonQuery();
+            reader = cmd.ExecuteReader();
+            reader.Read();
+
+            temp = String.Format("{0}", reader["IncomeDate"]);
+            connection.Close();
+            return temp;
+        }
+
+        //Compare first income and payment dates and sets the earliest startMonth
+        public int FindEarliestDate(String first, String second, DateTime firstDate, DateTime secondDate)
+        {
+            int temp;
+            if (firstDate < secondDate)
+            {
+                temp = Convert.ToInt32(DateTime.Parse(first).ToString("MM"));
+            }
+            else
+            {
+                temp = Convert.ToInt32(DateTime.Parse(second).ToString("MM"));
+            }
+            return temp;
+        }
+
+
+        public void FillMonthArrays(int startMonth)
+        {
+            //Fill monthCost array
+            int i;
+            for (i = startMonth - 1; i < currMonthNum; i++)
+            {
+                cmd = new OleDbCommand("SELECT TransactionMonth, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY TransactionMonth", connection);
+                cmd.Parameters.AddWithValue("@Month", month[i]);
+
+
+                connection.Open();
+                cmd.ExecuteNonQuery();
+                reader = cmd.ExecuteReader();
+                reader.Read();
+                try
+                {
+                    monthCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                }
+                catch (InvalidOperationException)
+                {
+                    monthCost[i] = "0";
+                }
+                connection.Close();
+            }
+
+
+            //Fill monthIncome array
+            for (i = startMonth - 1; i < currMonthNum; i++)
+            {
+                cmd = new OleDbCommand("SELECT IncomeMonth, SUM(Payment) AS TotalIncome FROM Income WHERE IncomeMonth = @Month GROUP BY IncomeMonth", connection);
+                cmd.Parameters.AddWithValue("@Month", month[i]);
+
+
+                connection.Open();
+                cmd.ExecuteNonQuery();
+                reader = cmd.ExecuteReader();
+                reader.Read();
+                try
+                {
+                    monthIncome[i] = String.Format("{0}", reader["TotalIncome"]);
+                }
+                catch (InvalidOperationException)
+                {
+                    monthIncome[i] = "0";
+                }
+                connection.Close();
+
+            }
+        }
+
         private void StatsWindow_Load(object sender, EventArgs e)
         {
+            
             monthChart.Visible = false;
             categoryChart.Visible = false;
             paidToChart.Visible = false;
             paidFromChart.Visible = false;
             monthChooser.Visible = false;
+
+            paidFrom.Clear();
+            paidTo.Clear();
+            category.Clear();
 
             int i = 0;
 
@@ -78,41 +179,15 @@ namespace Personal_Budget
             
             try
             {
-                //Earliest Payment date
-                cmd = new OleDbCommand("SELECT  TOP 1 TransactionDate FROM Payments ORDER BY TransactionDate", connection);
-                connection.Open();
-                cmd.ExecuteNonQuery();
-                reader = cmd.ExecuteReader();
-                reader.Read();
-
-                temp1 = String.Format("{0}", reader["TransactionDate"]);
-                connection.Close();
-
-                //Earliest Income date
-                cmd = new OleDbCommand("SELECT  TOP 1 IncomeDate FROM Income ORDER BY IncomeDate", connection);
-                connection.Open();
-                cmd.ExecuteNonQuery();
-                reader = cmd.ExecuteReader();
-                reader.Read();
-
-                temp2 = String.Format("{0}", reader["IncomeDate"]);
-                connection.Close();
+                temp1 = GetEarliestPayment();
+                temp2 = GetEarliestIncome();
 
                 //Convert date strings to DateTime for comparison
                 temp3 = Convert.ToDateTime(temp1);
                 temp4 = Convert.ToDateTime(temp2);
 
-                //Finds the earliest date between Income and Payment dates
-                //startMonth becomes the earliest month
+                startMonth = FindEarliestDate(temp1, temp2, temp3, temp4);
 
-                if (temp3 < temp4)
-                {
-                    startMonth = Convert.ToInt32(DateTime.Parse(temp1).ToString("MM"));
-                }
-                else
-                {
-                    startMonth = Convert.ToInt32(DateTime.Parse(temp2).ToString("MM"));
-                }
             }
             catch (InvalidOperationException)
             {
@@ -125,13 +200,6 @@ namespace Personal_Budget
                 paidFromBtn.Hide();
                 return;
             }
-
-            
-
-            
-
-            
-
 
             //Reset numPaidTo on window opening
             numPaidTo = 6;
@@ -154,54 +222,8 @@ namespace Personal_Budget
             monthChooser.SelectedText = "Total";
 
 
-            //Fill monthCost array
-
-            for (i = startMonth-1; i < currMonthNum; i++)
-            {
-                cmd = new OleDbCommand("SELECT TransactionMonth, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY TransactionMonth", connection);
-                cmd.Parameters.AddWithValue("@Month", month[i]);
-
-
-                connection.Open();
-                cmd.ExecuteNonQuery();
-                reader = cmd.ExecuteReader();
-                reader.Read();
-                try
-                {
-                    monthCost[i] = String.Format("{0}", reader["TotalPayment"]);
-                }
-                catch (InvalidOperationException)
-                {
-                    monthCost[i] = "0";
-                }
-                connection.Close();
-            }
-
-            //Fill monthIncome array
-            for (i = startMonth-1; i <= currMonthNum; i++)
-            {
-                cmd = new OleDbCommand("SELECT IncomeMonth, SUM(Payment) AS TotalIncome FROM Income WHERE IncomeMonth = @Month GROUP BY IncomeMonth", connection);
-                cmd.Parameters.AddWithValue("@Month", month[i]);
-
-
-                connection.Open();
-                cmd.ExecuteNonQuery();
-                reader = cmd.ExecuteReader();
-                reader.Read();
-                try
-                {
-                    monthIncome[i] = String.Format("{0}", reader["TotalIncome"]);
-                }
-                catch (InvalidOperationException)
-                {
-                    monthIncome[i] = "0";
-                }
-                connection.Close();
-
-            }
-
-
-
+            FillMonthArrays(startMonth);
+                       
             //Fill category array
             connection.Open();
             cmd = new OleDbCommand("SELECT TOP 6 Category, SUM(Payment) AS TotalPayment FROM Payments GROUP BY Category ORDER BY SUM(Payment) DESC", connection);
@@ -213,7 +235,7 @@ namespace Personal_Budget
 
             }
             connection.Close();
-
+            
 
             //Fill paidTo and paidFrom array
             connection.Open();
@@ -300,6 +322,7 @@ namespace Personal_Budget
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             //Category chart creation
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
+            
             String categorySeries = "Category";
             categoryChart.Series.Add(categorySeries);
 
@@ -319,7 +342,7 @@ namespace Personal_Budget
             categoryChart.Series[categorySeries].IsVisibleInLegend = true;
             categoryChart.BackColor = Color.Transparent;
             categoryChart.ChartAreas[0].BackColor = Color.Transparent;
-
+            
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                       
             //Month chart creation
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -377,7 +400,7 @@ namespace Personal_Budget
                 monthChart.Series[monthPaymentSeries].Points[j].Font = monthChart.Series[monthIncomeSeries].Points[j].Font = monthChart.Series[netSeries].Points[j].Font = new Font("Arial", 12, FontStyle.Bold);
                 j++;
             }
-
+            
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             //PaidTo chart creation
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -398,6 +421,7 @@ namespace Personal_Budget
                 paidToChart.Series[paidToSeries].LabelForeColor = Color.White;
                 paidToChart.Series[paidToSeries].Points[i].ToolTip = paidToCost[i];
             }
+            
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             //Creat PaidFrom Chart
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -420,7 +444,7 @@ namespace Personal_Budget
             }
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
-
+        
         }
         private void paidToBtn_Click(object sender, EventArgs e)
         {

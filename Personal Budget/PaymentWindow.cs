@@ -107,7 +107,7 @@ namespace Personal_Budget
             account = category = paidTo = temp = date = month = "";
 
             account = paymentAcctBox.Text;
-            category = categoryBox.SelectedText;
+            category = categoryBox.Text;
             temp = paymentBox.Text;
             payment = Convert.ToDouble(temp);
             paidTo = paidToBox.Text;
