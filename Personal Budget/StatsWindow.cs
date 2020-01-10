@@ -36,10 +36,10 @@ namespace Personal_Budget
         static List<String> categoryCost = new List<String>();
         static String[] paidToCost = new String[numPaidTo]; 
         static String[] paidFromCost = new string[numPaidFrom];
-        
-                              
 
-        static int currMonthNum = Convert.ToInt32(DateTime.Now.ToString("MM"));
+
+
+        static int currMonthNum = 12; // Convert.ToInt32(DateTime.Now.ToString("MM"));
         static String[] month = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
         static String[] monthCost = new String[12];
         static String[] monthIncome = new String[12];
@@ -51,7 +51,7 @@ namespace Personal_Budget
             InitializeComponent();
         }
 
-        public String GetEarliestPayment()
+        String GetEarliestPayment()
         {
             String temp = "";
             //Earliest Payment date
@@ -66,7 +66,7 @@ namespace Personal_Budget
             return temp;
         }
 
-        public String GetEarliestIncome()
+        String GetEarliestIncome()
         {
             String temp = "";
             //Earliest Income date
@@ -82,7 +82,7 @@ namespace Personal_Budget
         }
 
         //Compare first income and payment dates and sets the earliest startMonth
-        public int FindEarliestDate(String first, String second, DateTime firstDate, DateTime secondDate)
+        int FindEarliestDate(String first, String second, DateTime firstDate, DateTime secondDate)
         {
             int temp;
             if (firstDate < secondDate)
@@ -97,11 +97,11 @@ namespace Personal_Budget
         }
 
 
-        public void FillMonthArrays(int startMonth)
+        void FillMonthArrays(int startMonth)
         {
             //Fill monthCost array
             int i;
-            for (i = startMonth - 1; i < currMonthNum; i++)
+            for (i = startMonth - 1; i < 12; i++)
             {
                 cmd = new OleDbCommand("SELECT TransactionMonth, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY TransactionMonth", connection);
                 cmd.Parameters.AddWithValue("@Month", month[i]);
@@ -124,7 +124,7 @@ namespace Personal_Budget
 
 
             //Fill monthIncome array
-            for (i = startMonth - 1; i < currMonthNum; i++)
+            for (i = startMonth - 1; i < 12; i++)
             {
                 cmd = new OleDbCommand("SELECT IncomeMonth, SUM(Payment) AS TotalIncome FROM Income WHERE IncomeMonth = @Month GROUP BY IncomeMonth", connection);
                 cmd.Parameters.AddWithValue("@Month", month[i]);
@@ -145,6 +145,146 @@ namespace Personal_Budget
                 connection.Close();
 
             }
+        }
+
+        void fillArray(String type, String table)
+        {
+            
+            String connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
+            cmd = new OleDbCommand(connString, connection);
+            connection.Open();
+            reader = cmd.ExecuteReader();
+
+            switch (type)
+            {
+                case "Category":
+                    int i = 0;
+                    while (reader.Read())
+                    {
+                        category.Add(String.Format("{0}", reader[type]));
+                        categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
+                        i++;
+                    }
+                    break;
+                case "PaidTo":
+                    i = 0;
+                    while (reader.Read())
+                    {
+                        paidTo.Add(String.Format("{0}", reader[type]));
+                        paidToCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                        i++;
+                    }
+                    break;
+                case "PaidFrom":
+                    i = 0;
+                    while (reader.Read())
+                    {
+                        paidFrom.Add(String.Format("{0}", reader[type]));
+                        paidFromCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                        i++;
+                    }
+                    break;
+
+            }
+            connection.Close();
+        }
+
+        void FillArrayByMonth(String type, String table, Object month)
+        {
+            String connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE TransactionMonth = @Month GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
+            connection = new OleDbConnection(dbConnection.getConnection());
+            connection.Open();
+            cmd = new OleDbCommand(connString, connection);
+            cmd.Parameters.AddWithValue("@Month", month);
+            cmd.ExecuteNonQuery();
+
+            reader = cmd.ExecuteReader();
+
+            switch (type)
+            {
+                case "Category":
+                    while (reader.Read())
+                    {
+                        category.Add(String.Format("{0}", reader[type]));
+                        categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
+                    }
+                    break;
+                case "PaidTo":
+                    GetCount(type, table, month);
+
+                    connection.Open();
+                    OleDbCommand paidToCmd = new OleDbCommand("SELECT TOP 6 PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
+                    paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+                    paidToCmd.ExecuteNonQuery();
+
+                    reader = paidToCmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        paidTo.Add(String.Format("{0}", reader["PaidTo"]));
+                    }
+                    connection.Close();
+                    int i;
+                    for (i = 0; i < numPaidTo; i++)
+                    {
+                        connection = new OleDbConnection(dbConnection.getConnection());
+
+                        paidToCmd = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE PaidTo = @PaidTo AND TransactionMonth = @Month GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
+                        paidToCmd.Parameters.AddWithValue("@PaidTo", paidTo[i]);
+                        paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+
+                        connection.Open();
+                        paidToCmd.ExecuteNonQuery();
+                        reader = paidToCmd.ExecuteReader();
+                        reader.Read();
+
+                        paidToCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                        connection.Close();
+                    }
+
+                    break;
+                case "PaidFrom":
+                    i = 0;
+                    while (reader.Read())
+                    {
+                        paidFrom.Add(String.Format("{0}", reader[type]));
+                        paidFromCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                        i++;
+                    }
+                    break;
+            }
+
+            connection.Close();
+        }
+
+        void GetCount(String type, String table, Object month)
+        {
+            String connString = ("SELECT COUNT (" + type + ") AS NumPaidTo FROM (SELECT DISTINCT " + type + " FROM " + table + " WHERE TransactionMonth = @Month)");
+            Console.WriteLine(connString);
+            connection = new OleDbConnection(dbConnection.getConnection());
+            connection.Open();
+            OleDbCommand paidToCmd = new OleDbCommand("SELECT COUNT(PaidTo) AS NumPaidTo FROM (SELECT DISTINCT PaidTo FROM Payments WHERE TransactionMonth = @Month)", connection);
+            paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+
+
+            paidToCmd.ExecuteNonQuery();
+            reader = paidToCmd.ExecuteReader();
+            reader.Read();
+
+
+            //If PaidTo < 6, then resize arrays to new size
+            String temp = String.Format("{0}", reader["NumPaidTo"]);
+            numPaidTo = Convert.ToInt32(temp);
+            Console.WriteLine(numPaidTo);
+            if (numPaidTo < 6)
+            {
+                paidToCost = new String[numPaidTo];
+            }
+            else
+            {
+                numPaidTo = 6;
+            }
+            connection.Close();
         }
 
         private void StatsWindow_Load(object sender, EventArgs e)
@@ -214,7 +354,7 @@ namespace Personal_Budget
             paidFromCost = new String[numPaidFrom];
 
 
-            for (i=startMonth-1; i<currMonthNum; i++)
+            for (i=startMonth-1; i<12; i++)
             {
                 monthChooser.Items.Add(month[i]);
             }
@@ -223,88 +363,16 @@ namespace Personal_Budget
 
 
             FillMonthArrays(startMonth);
-                       
+
             //Fill category array
-            connection.Open();
-            cmd = new OleDbCommand("SELECT TOP 6 Category, SUM(Payment) AS TotalPayment FROM Payments GROUP BY Category ORDER BY SUM(Payment) DESC", connection);
-            reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {                
-                category.Add(String.Format("{0}", reader["Category"]));
-
-            }
-            connection.Close();
+            fillArray("Category", "Payments");
             
-
             //Fill paidTo and paidFrom array
-            connection.Open();
-            cmd = new OleDbCommand("SELECT TOP 6 PaidTo, SUM(Payment) AS TotalPayment FROM Payments GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
-            cmd2 = new OleDbCommand("SELECT TOP 6 PaidFrom, SUM(Payment) AS TotalPayment FROM Income GROUP BY PaidFRom ORDER BY SUM(Payment) DESC", connection);
-            reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-                paidTo.Add(String.Format("{0}", reader["PaidTo"]));
-            }
-            connection.Close();
-
-            connection.Open();
-            reader2 = cmd2.ExecuteReader();
-            while (reader2.Read())
-            {
-                paidFrom.Add(String.Format("{0}", reader2["PaidFrom"]));
-            }
-            connection.Close();
-
-
-            //Fill paidToCost array
-            cmd = new OleDbCommand("SELECT TOP 6 PaidTo, SUM(Payment) AS TotalPayment FROM Payments GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
-            connection.Open();
-            reader = cmd.ExecuteReader();
-            i = 0;
-            while (reader.Read())
-            {
-                paidToCost[i] = String.Format("{0}", reader["TotalPayment"]);
-                i++;
-            }
-            connection.Close();
-
-
-            //Fill paidFromCost array
-            for (i = 0; i < paidFrom.Count; i++)
-            {
-                cmd2 = new OleDbCommand("SELECT TOP 6 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom GROUP BY PaidFrom", connection);
-                cmd2.Parameters.AddWithValue("@PaidFrom", paidFrom[i]);
-
-                connection.Open();
-                cmd2.ExecuteNonQuery();
-                reader2 = cmd2.ExecuteReader();
-                reader2.Read();
-                paidFromCost[i] = String.Format("{0}", reader2["TotalPayment"]);
-                connection.Close();
-            }
-
-
-            //Fill categoryCost array
-            for (i = 0; i < category.Count; i++)
-            {
-
-                cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE CATEGORY = @Category GROUP BY Category", connection);
-                cmd.Parameters.AddWithValue("@Category", category[i]);
-
-                connection.Open();
-                cmd.ExecuteNonQuery();
-                reader = cmd.ExecuteReader();
-                reader.Read();
-
-                categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
-                connection.Close();
-            } 
-
+            fillArray("PaidTo", "Payments");
+            fillArray("PaidFrom", "Income");
 
             //Fill net, monthCost, and monthIncome array
-            for (i = startMonth-1; i < currMonthNum; i++)
+            for (i = startMonth-1; i < 12; i++)
             {
                 net[i] = (Convert.ToDouble(monthIncome[i]) - Convert.ToDouble(monthCost[i])).ToString();
 
@@ -513,89 +581,13 @@ namespace Personal_Budget
             if (monthChooser.SelectedItem.Equals("Total"))
             {
                 //Total Category Chart
-                connection.Open();
-                OleDbCommand cmd1 = new OleDbCommand("SELECT TOP 6 Category, SUM(Payment) AS TotalPayment FROM Payments GROUP BY Category ORDER BY SUM(Payment) DESC", connection);
-                reader = cmd1.ExecuteReader();
-
-                int i = 0;
-                while (reader.Read())
-                {
-                    category.Add(String.Format("{0}", reader["Category"]));
-                    i++;
-                }
-                connection.Close();
-
-                for (i = 0; i < category.Count; i++)
-                {
-                    connection = new OleDbConnection(dbConnection.getConnection());
-
-                    cmd1 = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE CATEGORY = @Category GROUP BY Category ORDER BY SUM(Payment) DESC", connection);
-                    cmd1.Parameters.AddWithValue("@Category", category[i]);
-
-                    connection.Open();
-                    cmd1.ExecuteNonQuery();
-                    reader = cmd1.ExecuteReader();
-                    reader.Read();
-
-                    categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
-                    connection.Close();
-                }
+                fillArray("Category", "Payments");
 
                 //Total PaidTo Chart
-                connection.Open();
-                cmd1 = new OleDbCommand("SELECT TOP 6 PaidTo, SUM(Payment) AS TotalPayment FROM Payments GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
-                reader = cmd1.ExecuteReader();
-
-                i = 0;
-                while (reader.Read())
-                {
-                    paidTo.Add(String.Format("{0}", reader["PaidTo"]));
-                    i++;
-                }
-                connection.Close();
-
-                for (i = 0; i < paidTo.Count; i++)
-                {
-                    connection = new OleDbConnection(dbConnection.getConnection());
-
-                    cmd1 = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE PaidTo = @PaidTo GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
-                    cmd1.Parameters.AddWithValue("@PaidTo", paidTo[i]);
-
-                    connection.Open();
-                    cmd1.ExecuteNonQuery();
-                    reader = cmd1.ExecuteReader();
-                    reader.Read();
-
-                    paidToCost[i] = String.Format("{0}", reader["TotalPayment"]);
-                    connection.Close();
-                }
+                fillArray("PaidTo", "Payments");
 
                 //Total PaidFrom Chart
-                connection.Open();
-                cmd1 = new OleDbCommand("SELECT TOP 6 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME GROUP BY PaidFrom ORDER BY SUM(Payment) DESC", connection);
-                reader = cmd1.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    paidFrom.Add(String.Format("{0}", reader["PaidFrom"]));
-                }
-                connection.Close();
-
-                for (i = 0; i < paidFrom.Count; i++)
-                {
-                    connection = new OleDbConnection(dbConnection.getConnection());
-
-                    cmd1 = new OleDbCommand("SELECT PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom GROUP BY PaidFrom ORDER BY SUM(Payment) DESC", connection);
-                    cmd1.Parameters.AddWithValue("@PaidFrom", paidFrom[i]);
-
-                    connection.Open();
-                    cmd1.ExecuteNonQuery();
-                    reader = cmd1.ExecuteReader();
-                    reader.Read();
-
-                    paidFromCost[i] = String.Format("{0}", reader["TotalPayment"]);
-                    connection.Close();
-                }
+                fillArray("PaidFrom", "Income");
 
             }
             
@@ -608,104 +600,10 @@ namespace Personal_Budget
                 category.Clear();
                 categoryCost.Clear();
 
-                connection = new OleDbConnection(dbConnection.getConnection());
-                connection.Open();
-                cmd = new OleDbCommand("SELECT TOP 6 Category, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY Category ORDER BY SUM(Payment) DESC", connection);
-                cmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
-                cmd.ExecuteNonQuery();
-
-                reader = cmd.ExecuteReader();
-
-                int i = 0;
-                while (reader.Read())
-                {
-                    category.Add(String.Format("{0}", reader["Category"]));
-                    i++;
-                    
-                }
-                connection.Close();
-
-
-                connection = new OleDbConnection(dbConnection.getConnection());
-
-                cmd = new OleDbCommand("SELECT Category, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY Category ORDER BY SUM(Payment) DESC", connection);
-                cmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
-                connection.Open();
-                cmd.ExecuteNonQuery();
-                reader = cmd.ExecuteReader();
-
-                i = 0;
-                while (reader.Read())
-                {
-                    categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
-                    i++;
-                }
-                connection.Close();
-
-
-
-                //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                //PAID TO
-                //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                //Checks size of possible people paid to
-                connection = new OleDbConnection(dbConnection.getConnection());
-                connection.Open();
-                OleDbCommand paidToCmd = new OleDbCommand("SELECT COUNT(PaidTo) AS NumPaidTo FROM (SELECT DISTINCT PaidTo FROM Payments WHERE TransactionMonth = @Month)", connection);
-                paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
-
-
-                paidToCmd.ExecuteNonQuery();
-                reader = paidToCmd.ExecuteReader();
-                reader.Read();
-
-
-                //If PaidTo < 6, then resize arrays to new size
-                temp = String.Format("{0}", reader["NumPaidTo"]);
-                numPaidTo = Convert.ToInt32(temp);
-                if (numPaidTo < 6)
-                {
-                    paidToCost = new String[numPaidTo];
-                }
-                else
-                {
-                    numPaidTo = 6;
-                }
-                connection.Close();
-
-
-                connection = new OleDbConnection(dbConnection.getConnection());
-                connection.Open();
-                paidToCmd = new OleDbCommand("SELECT TOP 6 PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
-                paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
-                paidToCmd.ExecuteNonQuery();
-
-                reader = paidToCmd.ExecuteReader();
-
-                i = 0;
-                while (reader.Read())
-                {
-                    paidTo.Add(String.Format("{0}", reader["PaidTo"]));
-                    i++;
-                }
-                connection.Close();
-
-                for (i = 0; i < numPaidTo; i++)
-                {
-                    connection = new OleDbConnection(dbConnection.getConnection());
-
-                    paidToCmd = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE PaidTo = @PaidTo AND TransactionMonth = @Month GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
-                    paidToCmd.Parameters.AddWithValue("@PaidTo", paidTo[i]);
-                    paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
-
-                    connection.Open();
-                    paidToCmd.ExecuteNonQuery();
-                    reader = paidToCmd.ExecuteReader();
-                    reader.Read();
-
-                    paidToCost[i] = String.Format("{0}", reader["TotalPayment"]);
-                    connection.Close();
-                }
-
+                FillArrayByMonth("Category", "Payments", monthChooser.SelectedItem);
+                FillArrayByMonth("PaidTo", "Payments", monthChooser.SelectedItem);
+                //FillArrayByMonth("PaidFrom", "Income", monthChooser.SelectedItem);
+      
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 //PAID FROM
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -734,21 +632,19 @@ namespace Personal_Budget
 
                 connection = new OleDbConnection(dbConnection.getConnection());
                 connection.Open();
-                paidFromCmd = new OleDbCommand("SELECT TOP 8 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE IncomeMonth = @Month GROUP BY PaidFrom ORDER BY SUM(Payment) DESC", connection);
+                paidFromCmd = new OleDbCommand("SELECT TOP 6 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE IncomeMonth = @Month GROUP BY PaidFrom ORDER BY SUM(Payment) DESC", connection);
                 paidFromCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
                 paidFromCmd.ExecuteNonQuery();
 
                 reader = paidFromCmd.ExecuteReader();
 
-                i = 0;
                 while (reader.Read())
                 {
                     paidFrom.Add(String.Format("{0}", reader["PaidFrom"]));
-                    i++;
                 }
                 connection.Close();
 
-                for (i = 0; i < paidFrom.Count; i++)
+                for (int i = 0; i < paidFrom.Count; i++)
                 {
                     connection = new OleDbConnection(dbConnection.getConnection());
 
@@ -764,8 +660,9 @@ namespace Personal_Budget
                     paidFromCost[i] = String.Format("{0}", reader["TotalPayment"]);
                     connection.Close();
                 }
+                
             }           
-
+            
 
             categoryChart.Series.Clear();
             paidToChart.Series.Clear();
