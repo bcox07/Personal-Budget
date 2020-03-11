@@ -16,7 +16,7 @@ namespace Personal_Budget
     {
         DataSet ds = new DataSet();
         static Connection dbConnection = new Connection();       
-        String sql = "SELECT * FROM Payments ORDER BY TransactionDate";
+        String sql = "SELECT * FROM Payments ORDER BY TransactionDate DESC";
         OleDbConnection connection = new OleDbConnection(dbConnection.getConnection());
         OleDbDataAdapter dataadapter;
         

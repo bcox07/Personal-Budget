@@ -38,6 +38,7 @@ namespace Personal_Budget
         {
             statWindow = new StatsWindow();
             statWindow.Show();
+            statWindow.WindowState = FormWindowState.Maximized;
             this.Hide();
         }
     }

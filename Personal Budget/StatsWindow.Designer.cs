@@ -48,6 +48,7 @@
             this.paidFromBtn = new System.Windows.Forms.Button();
             this.paidFromChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.monthChooser = new System.Windows.Forms.ComboBox();
+            this.yearChooser = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.categoryChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.monthChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.paidToChart)).BeginInit();
@@ -63,7 +64,7 @@
             chartArea1.Name = "ChartArea1";
             this.categoryChart.ChartAreas.Add(chartArea1);
             this.categoryChart.IsSoftShadows = false;
-            this.categoryChart.Location = new System.Drawing.Point(309, -38);
+            this.categoryChart.Location = new System.Drawing.Point(309, -50);
             this.categoryChart.Name = "categoryChart";
             this.categoryChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
             this.categoryChart.PaletteCustomColors = new System.Drawing.Color[] {
@@ -83,7 +84,7 @@
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Doughnut;
             series1.Name = "Series1";
             this.categoryChart.Series.Add(series1);
-            this.categoryChart.Size = new System.Drawing.Size(1210, 1038);
+            this.categoryChart.Size = new System.Drawing.Size(2304, 1480);
             this.categoryChart.TabIndex = 0;
             this.categoryChart.Text = "chart1";
             // 
@@ -143,12 +144,12 @@
             legend1.Name = "Legend1";
             legend1.TableStyle = System.Windows.Forms.DataVisualization.Charting.LegendTableStyle.Wide;
             this.monthChart.Legends.Add(legend1);
-            this.monthChart.Location = new System.Drawing.Point(268, -9);
+            this.monthChart.Location = new System.Drawing.Point(247, -12);
             this.monthChart.Name = "monthChart";
             this.monthChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
             this.monthChart.PaletteCustomColors = new System.Drawing.Color[] {
         System.Drawing.Color.DeepSkyBlue};
-            this.monthChart.Size = new System.Drawing.Size(1290, 1000);
+            this.monthChart.Size = new System.Drawing.Size(2345, 1416);
             this.monthChart.TabIndex = 5;
             this.monthChart.Text = "chart1";
             // 
@@ -160,7 +161,7 @@
             this.paidToChart.BorderlineWidth = 5;
             chartArea3.Name = "ChartArea1";
             this.paidToChart.ChartAreas.Add(chartArea3);
-            this.paidToChart.Location = new System.Drawing.Point(309, -38);
+            this.paidToChart.Location = new System.Drawing.Point(309, -49);
             this.paidToChart.Name = "paidToChart";
             this.paidToChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
             this.paidToChart.PaletteCustomColors = new System.Drawing.Color[] {
@@ -178,7 +179,7 @@
             series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Doughnut;
             series2.Name = "Series1";
             this.paidToChart.Series.Add(series2);
-            this.paidToChart.Size = new System.Drawing.Size(1210, 1038);
+            this.paidToChart.Size = new System.Drawing.Size(2304, 1480);
             this.paidToChart.TabIndex = 6;
             this.paidToChart.Text = "chart1";
             // 
@@ -187,9 +188,9 @@
             this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(107)))), ((int)(((byte)(135)))));
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(319, 12);
+            this.label1.Location = new System.Drawing.Point(319, -38);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1200, 1020);
+            this.label1.Size = new System.Drawing.Size(2229, 1443);
             this.label1.TabIndex = 7;
             this.label1.Text = "Click A Button To Display Stats";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -201,7 +202,7 @@
             this.backBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.backBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.backBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.backBtn.Location = new System.Drawing.Point(22, 829);
+            this.backBtn.Location = new System.Drawing.Point(36, 1229);
             this.backBtn.Name = "backBtn";
             this.backBtn.Size = new System.Drawing.Size(281, 120);
             this.backBtn.TabIndex = 8;
@@ -216,7 +217,7 @@
             this.paidFromBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.paidFromBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.paidFromBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.paidFromBtn.Location = new System.Drawing.Point(34, 460);
+            this.paidFromBtn.Location = new System.Drawing.Point(34, 472);
             this.paidFromBtn.Name = "paidFromBtn";
             this.paidFromBtn.Size = new System.Drawing.Size(283, 90);
             this.paidFromBtn.TabIndex = 9;
@@ -232,7 +233,7 @@
             this.paidFromChart.BorderlineWidth = 5;
             chartArea4.Name = "ChartArea1";
             this.paidFromChart.ChartAreas.Add(chartArea4);
-            this.paidFromChart.Location = new System.Drawing.Point(309, -38);
+            this.paidFromChart.Location = new System.Drawing.Point(309, -49);
             this.paidFromChart.Name = "paidFromChart";
             this.paidFromChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
             this.paidFromChart.PaletteCustomColors = new System.Drawing.Color[] {
@@ -250,7 +251,7 @@
             series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Doughnut;
             series3.Name = "Series1";
             this.paidFromChart.Series.Add(series3);
-            this.paidFromChart.Size = new System.Drawing.Size(1210, 1038);
+            this.paidFromChart.Size = new System.Drawing.Size(2304, 1480);
             this.paidFromChart.TabIndex = 10;
             this.paidFromChart.Text = "chart1";
             // 
@@ -258,18 +259,29 @@
             // 
             this.monthChooser.Font = new System.Drawing.Font("Arial Black", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.monthChooser.FormattingEnabled = true;
-            this.monthChooser.Location = new System.Drawing.Point(1285, 73);
+            this.monthChooser.Location = new System.Drawing.Point(1370, 661);
             this.monthChooser.Name = "monthChooser";
             this.monthChooser.Size = new System.Drawing.Size(189, 49);
             this.monthChooser.TabIndex = 11;
             this.monthChooser.SelectedIndexChanged += new System.EventHandler(this.monthChooser_SelectedIndexChanged);
             // 
+            // yearChooser
+            // 
+            this.yearChooser.Font = new System.Drawing.Font("Arial Black", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.yearChooser.FormattingEnabled = true;
+            this.yearChooser.Location = new System.Drawing.Point(1285, 12);
+            this.yearChooser.Name = "yearChooser";
+            this.yearChooser.Size = new System.Drawing.Size(189, 49);
+            this.yearChooser.TabIndex = 12;
+            this.yearChooser.SelectedIndexChanged += new System.EventHandler(this.yearChooser_SelectedIndexChanged_1);
+            // 
             // StatsWindow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(107)))), ((int)(((byte)(135)))));
-            this.ClientSize = new System.Drawing.Size(1538, 961);
+            this.ClientSize = new System.Drawing.Size(2544, 1401);
             this.ControlBox = false;
+            this.Controls.Add(this.yearChooser);
             this.Controls.Add(this.monthChooser);
             this.Controls.Add(this.paidFromBtn);
             this.Controls.Add(this.backBtn);
@@ -308,5 +320,6 @@
         private System.Windows.Forms.Button paidFromBtn;
         private System.Windows.Forms.DataVisualization.Charting.Chart paidFromChart;
         private System.Windows.Forms.ComboBox monthChooser;
+        private System.Windows.Forms.ComboBox yearChooser;
     }
 }

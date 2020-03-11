@@ -15,7 +15,7 @@ namespace Personal_Budget
     public partial class IncomeWindow : Form
     {
         DataSet ds = new DataSet();
-        String sql = "SELECT * FROM Income";
+        String sql = "SELECT * FROM Income ORDER BY IncomeDate DESC";
         
         static String connectionString = "Provider = Microsoft.Jet.OLEDB.4.0; Data Source = ..\\..\\Budget.mdb";
         OleDbConnection connection = new OleDbConnection(connectionString);

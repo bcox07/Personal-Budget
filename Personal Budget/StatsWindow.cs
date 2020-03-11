@@ -45,6 +45,9 @@ namespace Personal_Budget
         static String[] monthIncome = new String[12];
         static String[] net = new String[12];
 
+        static object chosenYear = "Total";
+        static object chosenMonth = "Total";
+
 
         public StatsWindow()
         {
@@ -82,18 +85,33 @@ namespace Personal_Budget
         }
 
         //Compare first income and payment dates and sets the earliest startMonth
-        int FindEarliestDate(String first, String second, DateTime firstDate, DateTime secondDate)
+       int FindEarliestDate(String first, String second, DateTime firstDate, DateTime secondDate)
         {
-            int temp;
+            int tempMonth, tempYear;
             if (firstDate < secondDate)
             {
-                temp = Convert.ToInt32(DateTime.Parse(first).ToString("MM"));
+                tempMonth = Convert.ToInt32(DateTime.Parse(first).ToString("MM"));
             }
             else
             {
-                temp = Convert.ToInt32(DateTime.Parse(second).ToString("MM"));
+                tempMonth = Convert.ToInt32(DateTime.Parse(second).ToString("MM"));
             }
-            return temp;
+            return tempMonth;
+        }
+
+        //Compare first income and payment dates and sets the earliest startMonth
+        int FindEarliestYear(String first, String second, DateTime firstDate, DateTime secondDate)
+        {
+            int tempYear;
+            if (firstDate < secondDate)
+            {
+                tempYear = Convert.ToInt32(DateTime.Parse(first).ToString("yyyy"));
+            }
+            else
+            {
+                tempYear = Convert.ToInt32(DateTime.Parse(first).ToString("yyyy"));
+            }
+            return tempYear;
         }
 
 
@@ -256,36 +274,80 @@ namespace Personal_Budget
 
             connection.Close();
         }
-
-        void GetCount(String type, String table, Object month)
+        /*
+        void FillArrayByMonthYear(String type, String table, Object month, Object year)
         {
-            String connString = ("SELECT COUNT (" + type + ") AS NumPaidTo FROM (SELECT DISTINCT " + type + " FROM " + table + " WHERE TransactionMonth = @Month)");
-            Console.WriteLine(connString);
+            String connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE TransactionMonth = @Month AND YEAR(TransactionDate) = " + year + " GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
             connection = new OleDbConnection(dbConnection.getConnection());
             connection.Open();
-            OleDbCommand paidToCmd = new OleDbCommand("SELECT COUNT(PaidTo) AS NumPaidTo FROM (SELECT DISTINCT PaidTo FROM Payments WHERE TransactionMonth = @Month)", connection);
-            paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+            cmd = new OleDbCommand(connString, connection);
+            cmd.Parameters.AddWithValue("@Month", month);
+            cmd.ExecuteNonQuery();
 
+            reader = cmd.ExecuteReader();
 
-            paidToCmd.ExecuteNonQuery();
-            reader = paidToCmd.ExecuteReader();
-            reader.Read();
-
-
-            //If PaidTo < 6, then resize arrays to new size
-            String temp = String.Format("{0}", reader["NumPaidTo"]);
-            numPaidTo = Convert.ToInt32(temp);
-            Console.WriteLine(numPaidTo);
-            if (numPaidTo < 6)
+            switch (type)
             {
-                paidToCost = new String[numPaidTo];
+                case "Category":
+                    while (reader.Read())
+                    {
+                        category.Add(String.Format("{0}", reader[type]));
+                        categoryCost.Add(String.Format("{0}", reader["TotalPayment"]));
+                    }
+                    break;
+                case "PaidTo":
+                    GetCount(type, table, month);
+
+                    connection.Open();
+                    OleDbCommand paidToCmd = new OleDbCommand("SELECT TOP 6 PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month AND YEAR(TransactionDate) = " + year + " GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
+                    paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+                    paidToCmd.ExecuteNonQuery();
+
+                    reader = paidToCmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        paidTo.Add(String.Format("{0}", reader["PaidTo"]));
+                    }
+                    connection.Close();
+                    int i;
+                    for (i = 0; i < numPaidTo; i++)
+                    {
+                        connection = new OleDbConnection(dbConnection.getConnection());
+
+                        paidToCmd = new OleDbCommand("SELECT PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE PaidTo = @PaidTo AND TransactionMonth = @Month AND YEAR(TransactionDate) = " + year + " GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
+                        paidToCmd.Parameters.AddWithValue("@PaidTo", paidTo[i]);
+                        paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+
+                        connection.Open();
+                        paidToCmd.ExecuteNonQuery();
+                        reader = paidToCmd.ExecuteReader();
+                        reader.Read();
+                        try
+                        {
+                            paidToCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                        }
+                        catch(InvalidOperationException e)
+                        {
+                            Console.WriteLine(e);
+                        }
+                        connection.Close();
+                    }
+
+                    break;
+                case "PaidFrom":
+                    i = 0;
+                    while (reader.Read())
+                    {
+                        paidFrom.Add(String.Format("{0}", reader[type]));
+                        paidFromCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                        i++;
+                    }
+                    break;
             }
-            else
-            {
-                numPaidTo = 6;
-            }
+
             connection.Close();
-        }
+        }*/
 
         private void StatsWindow_Load(object sender, EventArgs e)
         {
@@ -294,7 +356,10 @@ namespace Personal_Budget
             categoryChart.Visible = false;
             paidToChart.Visible = false;
             paidFromChart.Visible = false;
+            yearChooser.Visible = false;
             monthChooser.Visible = false;
+
+            yearChooser.DropDownStyle = ComboBoxStyle.DropDownList;
 
             paidFrom.Clear();
             paidTo.Clear();
@@ -315,6 +380,7 @@ namespace Personal_Budget
             temp1 = temp2 = "";
             DateTime temp3, temp4;
             int startMonth = 0;
+            int startYear = 0;
 
             
             try
@@ -327,6 +393,7 @@ namespace Personal_Budget
                 temp4 = Convert.ToDateTime(temp2);
 
                 startMonth = FindEarliestDate(temp1, temp2, temp3, temp4);
+                startYear = FindEarliestYear(temp1, temp2, temp3, temp4);
 
             }
             catch (InvalidOperationException)
@@ -340,6 +407,8 @@ namespace Personal_Budget
                 paidFromBtn.Hide();
                 return;
             }
+
+            
 
             //Reset numPaidTo on window opening
             numPaidTo = 6;
@@ -360,6 +429,17 @@ namespace Personal_Budget
             }
             monthChooser.Items.Add("Total");
             monthChooser.SelectedText = "Total";
+
+            DateTime curr = DateTime.Today;
+            String tempYear = curr.ToString("yyyy");
+
+            //Fill year combobox
+            for (i=startYear; i<=Int32.Parse(tempYear); i++)
+            {
+                yearChooser.Items.Add(i);
+            }
+            yearChooser.Items.Add("Total");
+            Console.WriteLine(yearChooser.SelectedIndex);
 
 
             FillMonthArrays(startMonth);
@@ -427,13 +507,13 @@ namespace Personal_Budget
             monthChart.Series.Add(monthIncomeSeries);
             monthChart.Series[monthIncomeSeries].ChartType = SeriesChartType.Line;
             monthChart.Series[monthIncomeSeries].BorderWidth = 8;
-            monthChart.Series[monthIncomeSeries].Color = mist;
+            monthChart.Series[monthIncomeSeries].Color = Color.FromArgb(146, 156, 80); ;
             monthChart.Series[monthIncomeSeries].LabelForeColor = Color.White;
 
             monthChart.Series.Add(netSeries);
             monthChart.Series[netSeries].ChartType = SeriesChartType.Line;
             monthChart.Series[netSeries].BorderWidth = 8;
-            monthChart.Series[netSeries].Color = Color.FromArgb(146, 156, 80);
+            monthChart.Series[netSeries].Color = mist;
             monthChart.Series[netSeries].LabelForeColor = Color.White;
 
 
@@ -514,12 +594,83 @@ namespace Personal_Budget
             
         
         }
+
+        void GetCount(String type, String table, Object month)
+        {
+            String connString = ("SELECT COUNT (" + type + ") AS NumPaidTo FROM (SELECT DISTINCT " + type + " FROM " + table + " WHERE TransactionMonth = @Month)");
+            connection = new OleDbConnection(dbConnection.getConnection());
+            connection.Open();
+            OleDbCommand paidToCmd = new OleDbCommand("SELECT COUNT(PaidTo) AS NumPaidTo FROM (SELECT DISTINCT PaidTo FROM Payments WHERE TransactionMonth = @Month)", connection);
+            paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+
+
+            paidToCmd.ExecuteNonQuery();
+            reader = paidToCmd.ExecuteReader();
+            reader.Read();
+
+
+            //If PaidTo < 6, then resize arrays to new size
+            String temp = String.Format("{0}", reader["NumPaidTo"]);
+            numPaidTo = Convert.ToInt32(temp);
+            if (numPaidTo < 6)
+            {
+                paidToCost = new String[numPaidTo];
+            }
+            else
+            {
+                numPaidTo = 6;
+            }
+            connection.Close();
+        }
+
+        void CustomizeMonthChart(String cost, String income, String net)
+        {
+
+            monthChart.Series.Add(cost);
+            monthChart.Series[cost].ChartType = SeriesChartType.Line;
+            monthChart.Series[cost].BorderWidth = 8;
+            monthChart.Series[cost].LabelForeColor = Color.White;
+            monthChart.Series[cost].Color = autumn;
+
+            monthChart.Series.Add(income);
+            monthChart.Series[income].ChartType = SeriesChartType.Line;
+            monthChart.Series[income].BorderWidth = 8;
+            monthChart.Series[income].Color = Color.FromArgb(146, 156, 80); ;
+            monthChart.Series[income].LabelForeColor = Color.White;
+
+            monthChart.Series.Add(net);
+            monthChart.Series[net].ChartType = SeriesChartType.Line;
+            monthChart.Series[net].BorderWidth = 8;
+            monthChart.Series[net].Color = mist;
+            monthChart.Series[net].LabelForeColor = Color.White;
+
+
+            monthChart.ChartAreas[0].BackColor = stone;
+
+            monthChart.ChartAreas[0].AxisX.LineColor = mist;
+            monthChart.ChartAreas[0].AxisX.MajorGrid.LineColor = mist;
+            monthChart.ChartAreas[0].AxisX.MajorGrid.LineWidth = 3;
+            monthChart.ChartAreas[0].AxisX.MajorTickMark.LineColor = mist;
+            monthChart.ChartAreas[0].AxisX.MajorTickMark.LineWidth = 3;
+            monthChart.ChartAreas[0].AxisX.LabelStyle.ForeColor = mist;
+            monthChart.ChartAreas[0].AxisX.LabelStyle.Font = new Font("Arial", 14, FontStyle.Bold);
+
+            monthChart.ChartAreas[0].AxisY.LineColor = mist;
+            monthChart.ChartAreas[0].AxisY.MajorGrid.LineColor = mist;
+            monthChart.ChartAreas[0].AxisY.MajorGrid.LineWidth = 3;
+            monthChart.ChartAreas[0].AxisY.MajorTickMark.LineColor = mist;
+            monthChart.ChartAreas[0].AxisY.MajorTickMark.LineWidth = 3;
+            monthChart.ChartAreas[0].AxisY.LabelStyle.ForeColor = mist;
+            monthChart.ChartAreas[0].AxisY.LabelStyle.Font = new Font("Arial", 14, FontStyle.Bold);
+        }
+
         private void paidToBtn_Click(object sender, EventArgs e)
         {
             monthChart.Visible = false;
             categoryChart.Visible = false;
             paidToChart.Visible = true;
             paidFromChart.Visible = false;
+            yearChooser.Visible = false;
             monthChooser.Visible = true;
         }
 
@@ -542,7 +693,9 @@ namespace Personal_Budget
             categoryChart.Visible = false;
             paidToChart.Visible = false;
             paidFromChart.Visible = true;
+            yearChooser.Visible = false;
             monthChooser.Visible = true;
+            yearChooser.Visible = false;
         }
 
         private void categoryBtn_Click(object sender, EventArgs e)
@@ -551,7 +704,9 @@ namespace Personal_Budget
             categoryChart.Visible = true;
             paidToChart.Visible = false;
             paidFromChart.Visible = false;
+            yearChooser.Visible = false;
             monthChooser.Visible = true;
+            yearChooser.Visible = false;
         }
                
         private void monthBtn_Click(object sender, EventArgs e)
@@ -560,7 +715,304 @@ namespace Personal_Budget
             monthChart.Visible = true;
             paidToChart.Visible = false;
             paidFromChart.Visible = false;
+            yearChooser.Visible = true;
             monthChooser.Visible = false;
+            yearChooser.Visible = true;
+
+        }
+
+
+        private void yearChooser_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            chosenYear = yearChooser.SelectedItem;
+            monthChart.Series.Clear();
+
+            String monthPaymentSeries = "Cost";
+            String monthIncomeSeries = "Income";
+            String netSeries = "Net";
+
+            CustomizeMonthChart(monthPaymentSeries, monthIncomeSeries, netSeries);
+
+            if (chosenYear == "Total")
+            {
+               
+
+                //Fill monthCost array
+                int i;
+                for (i = 0; i < 12; i++)
+                {
+                    cmd = new OleDbCommand("SELECT TransactionMonth, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY TransactionMonth", connection);
+                    cmd.Parameters.AddWithValue("@Month", month[i]);
+                    cmd.Parameters.AddWithValue("@Year", chosenYear);
+
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    reader = cmd.ExecuteReader();
+                    reader.Read();
+                    try
+                    {
+                        monthCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        monthCost[i] = "0";
+                    }
+                    connection.Close();
+                }
+
+
+                //Fill monthIncome array
+                for (i = 0; i < 12; i++)
+                {
+                    cmd = new OleDbCommand("SELECT IncomeMonth, SUM(Payment) AS TotalIncome FROM Income WHERE IncomeMonth = @Month GROUP BY IncomeMonth", connection);
+                    cmd.Parameters.AddWithValue("@Month", month[i]);
+                    cmd.Parameters.AddWithValue("@Year", chosenYear);
+
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    reader = cmd.ExecuteReader();
+                    reader.Read();
+                    try
+                    {
+                        monthIncome[i] = String.Format("{0}", reader["TotalIncome"]);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        monthIncome[i] = "0";
+                    }
+                    connection.Close();
+
+                }
+
+                //Fill net, monthCost, and monthIncome array
+                for (i = 0; i < 12; i++)
+                {
+                    net[i] = (Convert.ToDouble(monthIncome[i]) - Convert.ToDouble(monthCost[i])).ToString();
+
+                    monthCost[i] = String.Format("{0:#.00}", Convert.ToDecimal(monthCost[i]));
+                    monthCost[i] = "$" + monthCost[i];
+
+                    monthIncome[i] = String.Format("{0:#.00}", Convert.ToDecimal(monthIncome[i]));
+                    monthIncome[i] = "$" + monthIncome[i];
+
+                    net[i] = String.Format("{0:#.00}", Convert.ToDecimal(net[i]));
+                    net[i] = "$" + net[i];
+                }
+
+
+                int j = 0;
+                for (i = 0; i < currMonthNum; i++)
+                {
+
+                    monthChart.Series[monthPaymentSeries].Points.AddXY(month[i], monthCost[i]);
+                    monthChart.Series[monthIncomeSeries].Points.AddXY(month[i], monthIncome[i]);
+                    monthChart.Series[netSeries].Points.AddXY(month[i], net[i]);
+                    monthChart.Series[monthPaymentSeries].Points[j].Label = monthCost[i];
+                    monthChart.Series[monthIncomeSeries].Points[j].Label = monthIncome[i];
+                    monthChart.Series[netSeries].Points[j].Label = net[i];
+                    monthChart.Series[monthPaymentSeries].Points[j].Font = monthChart.Series[monthIncomeSeries].Points[j].Font = monthChart.Series[netSeries].Points[j].Font = new Font("Arial", 12, FontStyle.Bold);
+                    j++;
+                }
+            }
+
+            else
+            {
+                //Fill monthCost array
+                int i;
+                for (i = 0; i < 12; i++)
+                {
+                    cmd = new OleDbCommand("SELECT TransactionMonth, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month AND YEAR([TransactionDate]) = @Year GROUP BY  YEAR([TransactionDate]), TransactionMonth", connection);
+                    cmd.Parameters.AddWithValue("@Month", month[i]);
+                    cmd.Parameters.AddWithValue("@Year", chosenYear);
+
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    reader = cmd.ExecuteReader();
+                    reader.Read();
+                    try
+                    {
+                        monthCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        monthCost[i] = "0";
+                    }
+                    connection.Close();
+                }
+
+
+                //Fill monthIncome array
+                for (i = 0; i < 12; i++)
+                {
+                    cmd = new OleDbCommand("SELECT IncomeMonth, SUM(Payment) AS TotalIncome FROM Income WHERE IncomeMonth = @Month AND YEAR([IncomeDate]) = @Year GROUP BY YEAR([IncomeDate]), IncomeMonth", connection);
+                    cmd.Parameters.AddWithValue("@Month", month[i]);
+                    cmd.Parameters.AddWithValue("@Year", chosenYear);
+
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    reader = cmd.ExecuteReader();
+                    reader.Read();
+                    try
+                    {
+                        monthIncome[i] = String.Format("{0}", reader["TotalIncome"]);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        monthIncome[i] = "0";
+                    }
+                    connection.Close();
+
+                }
+
+                //Fill net, monthCost, and monthIncome array
+                for (i = 0; i < 12; i++)
+                {
+                    net[i] = (Convert.ToDouble(monthIncome[i]) - Convert.ToDouble(monthCost[i])).ToString();
+
+                    monthCost[i] = String.Format("{0:#.00}", Convert.ToDecimal(monthCost[i]));
+                    monthCost[i] = "$" + monthCost[i];
+
+                    monthIncome[i] = String.Format("{0:#.00}", Convert.ToDecimal(monthIncome[i]));
+                    monthIncome[i] = "$" + monthIncome[i];
+
+                    net[i] = String.Format("{0:#.00}", Convert.ToDecimal(net[i]));
+                    net[i] = "$" + net[i];
+                }
+
+                //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                //CATEGORIES
+                //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                category.Clear();
+                categoryCost.Clear();
+
+                //FillArrayByMonthYear("Category", "Payments", monthChooser.SelectedItem, yearChooser.SelectedItem);
+                //FillArrayByMonthYear("PaidTo", "Payments", monthChooser.SelectedItem, yearChooser.SelectedItem);
+                //FillArrayByMonth("PaidFrom", "Income", monthChooser.SelectedItem);
+
+                /*
+                //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                //PAID FROM
+                //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                //Checks size of possible people paid from
+                connection = new OleDbConnection(dbConnection.getConnection());
+                connection.Open();
+                OleDbCommand paidFromCmd = new OleDbCommand("SELECT COUNT(PaidFrom) AS NumPaidFrom FROM (SELECT DISTINCT PaidFrom FROM Income WHERE IncomeMonth = @Month)", connection);
+                paidFromCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+
+
+                paidFromCmd.ExecuteNonQuery();
+                reader = paidFromCmd.ExecuteReader();
+                reader.Read();
+
+
+                //If PaidFrom < 6, then rezise arrays to new size
+                String temp = String.Format("{0}", reader["NumPaidFrom"]);
+                numPaidFrom = Convert.ToInt32(temp);
+                if (numPaidFrom < 6)
+                {
+                    paidFromCost = new String[numPaidFrom];
+                }
+                connection.Close();
+
+
+                connection = new OleDbConnection(dbConnection.getConnection());
+                connection.Open();
+                paidFromCmd = new OleDbCommand("SELECT TOP 6 PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE IncomeMonth = @Month AND YEAR(IncomeDate) = " + yearChooser.SelectedItem + " GROUP BY PaidFrom ORDER BY SUM(Payment) DESC", connection);
+                paidFromCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+                paidFromCmd.Parameters.AddWithValue("@Year", yearChooser.SelectedItem);
+                paidFromCmd.ExecuteNonQuery();
+
+                reader = paidFromCmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    paidFrom.Add(String.Format("{0}", reader["PaidFrom"]));
+                }
+                connection.Close();
+                Console.WriteLine(paidFrom.Count);
+                for (i = 0; i < paidFromCost.Length; i++)
+                {
+                    connection = new OleDbConnection(dbConnection.getConnection());
+                    Console.WriteLine(paidFrom[i]);
+                    paidFromCmd = new OleDbCommand("SELECT PaidFrom, SUM(Payment) AS TotalPayment FROM INCOME WHERE PaidFrom = @PaidFrom AND IncomeMonth = @Month AND YEAR(IncomeDate) = " + yearChooser.SelectedItem + " GROUP BY PaidFrom ORDER BY SUM(Payment) DESC", connection);
+                    paidFromCmd.Parameters.AddWithValue("@PaidFrom", paidFrom[i]);
+                    paidFromCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+                    paidFromCmd.Parameters.AddWithValue("@Year", yearChooser.SelectedItem);
+
+
+                    connection.Open();
+                    paidFromCmd.ExecuteNonQuery();
+                    reader = paidFromCmd.ExecuteReader();
+                    reader.Read();
+
+                    paidFromCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                    connection.Close();
+                }
+                */
+
+                int j = 0;
+                for (i = 0; i < currMonthNum; i++)
+                {
+
+                    monthChart.Series[monthPaymentSeries].Points.AddXY(month[i], monthCost[i]);
+                    monthChart.Series[monthIncomeSeries].Points.AddXY(month[i], monthIncome[i]);
+                    monthChart.Series[netSeries].Points.AddXY(month[i], net[i]);
+                    monthChart.Series[monthPaymentSeries].Points[j].Label = monthCost[i];
+                    monthChart.Series[monthIncomeSeries].Points[j].Label = monthIncome[i];
+                    monthChart.Series[netSeries].Points[j].Label = net[i];
+                    monthChart.Series[monthPaymentSeries].Points[j].Font = monthChart.Series[monthIncomeSeries].Points[j].Font = monthChart.Series[netSeries].Points[j].Font = new Font("Arial", 12, FontStyle.Bold);
+                    j++;
+                }
+
+                categoryChart.Series.Clear();
+                paidToChart.Series.Clear();
+                paidFromChart.Series.Clear();
+
+                String categorySeries = "Category";
+                String paidToSeries = "PaidTo";
+                String paidFromSeries = "PaidFrom";
+
+                categoryChart.Series.Add(categorySeries);
+                paidToChart.Series.Add(paidToSeries);
+                paidFromChart.Series.Add(paidFromSeries);
+
+                //Adds data to Category chart
+                for (i = 0; i < category.Count; i++)
+                {
+                    categoryChart.Series[categorySeries].Points.AddXY(category[i], categoryCost[i]);
+                    categoryChart.Series[categorySeries].Points[i].Label = category[i];
+                    categoryCost[i] = String.Format("{0:#.00}", Convert.ToDecimal(categoryCost[i]));
+                    categoryCost[i] = "$" + categoryCost[i];
+                    categoryChart.Series[categorySeries].Points[i].LegendText = categoryCost[i];
+                    categoryChart.Series[categorySeries].Points[i].Font = new Font("Arial", 14, FontStyle.Bold);
+                    categoryChart.Series[categorySeries].LabelForeColor = Color.White;
+                    categoryChart.Series[categorySeries].Points[i].ToolTip = categoryCost[i];
+                }
+
+                //Adds data to PaidTo chart
+                for (i = 0; i < 6; i++)
+                {
+                    paidToChart.Series[paidToSeries].Points.AddXY(paidTo[i], paidToCost[i]);
+                    paidToChart.Series[paidToSeries].Points[i].Label = paidTo[i];
+                    paidToChart.Series[paidToSeries].Points[i].LegendText = paidToCost[i];
+                    paidToChart.Series[paidToSeries].Points[i].Font = new Font("Arial", 14, FontStyle.Bold);
+                    paidToChart.Series[paidToSeries].LabelForeColor = Color.White;
+                    paidToChart.Series[paidToSeries].Points[i].ToolTip = paidToCost[i];
+                }
+
+                //Options for category chart
+                categoryChart.Series[categorySeries].ChartType = SeriesChartType.Doughnut;
+                categoryChart.Series[categorySeries].IsVisibleInLegend = false;
+                categoryChart.BackColor = Color.Transparent;
+                categoryChart.ChartAreas[0].BackColor = Color.Transparent;
+
+                //Options for PaidTo chart
+                paidToChart.Series[paidToSeries].ChartType = SeriesChartType.Doughnut;
+                paidToChart.Series[paidToSeries].IsVisibleInLegend = false;
+                paidToChart.BackColor = Color.Transparent;
+                paidToChart.ChartAreas[0].BackColor = Color.Transparent;
+            }   
         }
 
 
@@ -580,6 +1032,7 @@ namespace Personal_Budget
             
             if (monthChooser.SelectedItem.Equals("Total"))
             {
+                yearChooser.Visible = false;
                 //Total Category Chart
                 fillArray("Category", "Payments");
 
@@ -593,7 +1046,7 @@ namespace Personal_Budget
             
             else
             {
-
+                yearChooser.Visible = true;
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 //CATEGORIES
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
