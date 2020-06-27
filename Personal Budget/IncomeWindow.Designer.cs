@@ -48,11 +48,11 @@
             // dateLbl
             // 
             this.dateLbl.AutoSize = true;
-            this.dateLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dateLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.dateLbl.Location = new System.Drawing.Point(92, 221);
+            this.dateLbl.Location = new System.Drawing.Point(77, 221);
             this.dateLbl.Name = "dateLbl";
-            this.dateLbl.Size = new System.Drawing.Size(61, 31);
+            this.dateLbl.Size = new System.Drawing.Size(76, 31);
             this.dateLbl.TabIndex = 31;
             this.dateLbl.Text = "Date";
             // 
@@ -73,11 +73,11 @@
             // IDLbl
             // 
             this.IDLbl.AutoSize = true;
-            this.IDLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.IDLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.IDLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.IDLbl.Location = new System.Drawing.Point(29, 35);
+            this.IDLbl.Location = new System.Drawing.Point(5, 35);
             this.IDLbl.Name = "IDLbl";
-            this.IDLbl.Size = new System.Drawing.Size(120, 31);
+            this.IDLbl.Size = new System.Drawing.Size(147, 31);
             this.IDLbl.TabIndex = 28;
             this.IDLbl.Text = "Income ID";
             // 
@@ -106,22 +106,22 @@
             // paymentLbl
             // 
             this.paymentLbl.AutoSize = true;
-            this.paymentLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.paymentLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.paymentLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.paymentLbl.Location = new System.Drawing.Point(47, 158);
+            this.paymentLbl.Location = new System.Drawing.Point(25, 158);
             this.paymentLbl.Name = "paymentLbl";
-            this.paymentLbl.Size = new System.Drawing.Size(106, 31);
+            this.paymentLbl.Size = new System.Drawing.Size(128, 31);
             this.paymentLbl.TabIndex = 25;
             this.paymentLbl.Text = "Payment";
             // 
             // paidFromLbl
             // 
             this.paidFromLbl.AutoSize = true;
-            this.paidFromLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.paidFromLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.paidFromLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.paidFromLbl.Location = new System.Drawing.Point(29, 96);
+            this.paidFromLbl.Location = new System.Drawing.Point(5, 96);
             this.paidFromLbl.Name = "paidFromLbl";
-            this.paidFromLbl.Size = new System.Drawing.Size(124, 31);
+            this.paidFromLbl.Size = new System.Drawing.Size(147, 31);
             this.paidFromLbl.TabIndex = 24;
             this.paidFromLbl.Text = "Paid From";
             // 

@@ -216,7 +216,7 @@
             this.dateLbl.AutoSize = true;
             this.dateLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.dateLbl.Location = new System.Drawing.Point(151, 379);
+            this.dateLbl.Location = new System.Drawing.Point(139, 379);
             this.dateLbl.Name = "dateLbl";
             this.dateLbl.Size = new System.Drawing.Size(76, 31);
             this.dateLbl.TabIndex = 18;
