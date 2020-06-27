@@ -109,44 +109,44 @@
             // accountLabel
             // 
             this.accountLabel.AutoSize = true;
-            this.accountLabel.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.accountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.accountLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.accountLabel.Location = new System.Drawing.Point(112, 104);
+            this.accountLabel.Location = new System.Drawing.Point(95, 104);
             this.accountLabel.Name = "accountLabel";
-            this.accountLabel.Size = new System.Drawing.Size(103, 31);
+            this.accountLabel.Size = new System.Drawing.Size(120, 31);
             this.accountLabel.TabIndex = 8;
             this.accountLabel.Text = "Account";
             // 
             // paidToLbl
             // 
             this.paidToLbl.AutoSize = true;
-            this.paidToLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.paidToLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.paidToLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.paidToLbl.Location = new System.Drawing.Point(120, 310);
+            this.paidToLbl.Location = new System.Drawing.Point(101, 310);
             this.paidToLbl.Name = "paidToLbl";
-            this.paidToLbl.Size = new System.Drawing.Size(95, 31);
+            this.paidToLbl.Size = new System.Drawing.Size(114, 31);
             this.paidToLbl.TabIndex = 9;
             this.paidToLbl.Text = "Paid To";
             // 
             // paymentLbl
             // 
             this.paymentLbl.AutoSize = true;
-            this.paymentLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.paymentLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.paymentLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.paymentLbl.Location = new System.Drawing.Point(109, 242);
+            this.paymentLbl.Location = new System.Drawing.Point(87, 242);
             this.paymentLbl.Name = "paymentLbl";
-            this.paymentLbl.Size = new System.Drawing.Size(106, 31);
+            this.paymentLbl.Size = new System.Drawing.Size(128, 31);
             this.paymentLbl.TabIndex = 10;
             this.paymentLbl.Text = "Payment";
             // 
             // categoryLbl
             // 
             this.categoryLbl.AutoSize = true;
-            this.categoryLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.categoryLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.categoryLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.categoryLbl.Location = new System.Drawing.Point(105, 173);
+            this.categoryLbl.Location = new System.Drawing.Point(82, 171);
             this.categoryLbl.Name = "categoryLbl";
-            this.categoryLbl.Size = new System.Drawing.Size(110, 31);
+            this.categoryLbl.Size = new System.Drawing.Size(133, 31);
             this.categoryLbl.TabIndex = 11;
             this.categoryLbl.Text = "Category";
             // 
@@ -181,11 +181,11 @@
             // IDLbl
             // 
             this.IDLbl.AutoSize = true;
-            this.IDLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.IDLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.IDLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
-            this.IDLbl.Location = new System.Drawing.Point(47, 35);
+            this.IDLbl.Location = new System.Drawing.Point(12, 35);
             this.IDLbl.Name = "IDLbl";
-            this.IDLbl.Size = new System.Drawing.Size(168, 31);
+            this.IDLbl.Size = new System.Drawing.Size(206, 31);
             this.IDLbl.TabIndex = 15;
             this.IDLbl.Text = "Transaction ID";
             // 
@@ -214,11 +214,11 @@
             // dateLbl
             // 
             this.dateLbl.AutoSize = true;
-            this.dateLbl.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dateLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateLbl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(175)))), ((int)(((byte)(197)))));
             this.dateLbl.Location = new System.Drawing.Point(151, 379);
             this.dateLbl.Name = "dateLbl";
-            this.dateLbl.Size = new System.Drawing.Size(61, 31);
+            this.dateLbl.Size = new System.Drawing.Size(76, 31);
             this.dateLbl.TabIndex = 18;
             this.dateLbl.Text = "Date";
             // 
