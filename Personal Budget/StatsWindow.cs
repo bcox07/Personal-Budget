@@ -34,7 +34,7 @@ namespace Personal_Budget
         static List<String> category = new List<String>();
 
         static List<String> categoryCost = new List<String>();
-        static String[] paidToCost = new String[numPaidTo]; 
+        static List<String> paidToCost = new List<String>();
         static String[] paidFromCost = new string[numPaidFrom];
 
 
@@ -58,7 +58,12 @@ namespace Personal_Budget
         {
             String temp = "";
             //Earliest Payment date
-            cmd = new OleDbCommand("SELECT  TOP 1 TransactionDate FROM Payments ORDER BY TransactionDate", connection);
+            cmd = new OleDbCommand(@"   SELECT TOP 1 
+                                            TransactionDate 
+                                        FROM Payments 
+                                        ORDER BY 
+                                            TransactionDate", 
+                                            connection);
             connection.Open();
             cmd.ExecuteNonQuery();
             reader = cmd.ExecuteReader();
@@ -189,7 +194,7 @@ namespace Personal_Budget
                     while (reader.Read())
                     {
                         paidTo.Add(String.Format("{0}", reader[type]));
-                        paidToCost[i] = String.Format("{0}", reader["TotalPayment"]);
+                        paidToCost.Add(String.Format("{0}", reader["TotalPayment"]));
                         i++;
                     }
                     break;
@@ -209,7 +214,16 @@ namespace Personal_Budget
 
         void FillArrayByMonth(String type, String table, Object month)
         {
-            String connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE TransactionMonth = @Month GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
+            string connString = null;
+            if (yearChooser.SelectedItem == "Total")
+            {
+                connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE TransactionMonth = @Month GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
+            }
+            else
+            {
+                connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE TransactionMonth = @Month AND YEAR(TransactionDate) = " + yearChooser.SelectedItem + " GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
+            }
+            
             connection = new OleDbConnection(dbConnection.getConnection());
             connection.Open();
             cmd = new OleDbCommand(connString, connection);
@@ -228,19 +242,21 @@ namespace Personal_Budget
                     }
                     break;
                 case "PaidTo":
-                    GetCount(type, table, month);
+                    //GetCount(type, table, month);
 
-                    connection.Open();
-                    OleDbCommand paidToCmd = new OleDbCommand("SELECT TOP 6 PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
-                    paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
-                    paidToCmd.ExecuteNonQuery();
+                    //connection.Open();
+                    //OleDbCommand paidToCmd = new OleDbCommand("SELECT TOP 6 PaidTo, SUM(Payment) AS TotalPayment FROM Payments WHERE TransactionMonth = @Month GROUP BY PaidTo ORDER BY SUM(Payment) DESC", connection);
+                    //paidToCmd.Parameters.AddWithValue("@Month", monthChooser.SelectedItem);
+                    //paidToCmd.ExecuteNonQuery();
 
-                    reader = paidToCmd.ExecuteReader();
+                    //reader = paidToCmd.ExecuteReader();
 
                     while (reader.Read())
                     {
-                        paidTo.Add(String.Format("{0}", reader["PaidTo"]));
+                        paidTo.Add(String.Format("{0}", reader[type]));
+                        paidToCost.Add(String.Format("{0}", reader["TotalPayment"]));
                     }
+                    /*
                     connection.Close();
                     int i;
                     for (i = 0; i < numPaidTo; i++)
@@ -259,10 +275,10 @@ namespace Personal_Budget
                         paidToCost[i] = String.Format("{0}", reader["TotalPayment"]);
                         connection.Close();
                     }
-
+                    */
                     break;
                 case "PaidFrom":
-                    i = 0;
+                    int i = 0;
                     while (reader.Read())
                     {
                         paidFrom.Add(String.Format("{0}", reader[type]));
@@ -419,7 +435,7 @@ namespace Personal_Budget
 
 
             categoryCost.Clear();
-            paidToCost = new String[numPaidTo];
+            paidToCost.Clear();
             paidFromCost = new String[numPaidFrom];
 
 
@@ -614,7 +630,7 @@ namespace Personal_Budget
             numPaidTo = Convert.ToInt32(temp);
             if (numPaidTo < 6)
             {
-                paidToCost = new String[numPaidTo];
+                //paidToCost = new String[numPaidTo];
             }
             else
             {
@@ -670,7 +686,10 @@ namespace Personal_Budget
             categoryChart.Visible = false;
             paidToChart.Visible = true;
             paidFromChart.Visible = false;
-            yearChooser.Visible = false;
+            int locationX = monthChooser.Location.X;
+            int locationY = monthChooser.Location.Y - 60;
+            yearChooser.Visible = true;
+            yearChooser.Location = new Point(locationX, locationY);
             monthChooser.Visible = true;
         }
 
@@ -1019,7 +1038,7 @@ namespace Personal_Budget
         private void monthChooser_SelectedIndexChanged(object sender, EventArgs e)
         {
             categoryCost.Clear();
-            paidToCost = new string[6];
+            paidToCost.Clear();
             paidFromCost = new string[6];
 
             category.Clear();
