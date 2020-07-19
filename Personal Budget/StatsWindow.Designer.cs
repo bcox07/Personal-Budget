@@ -94,7 +94,7 @@
             this.categoryBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.categoryBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.categoryBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.categoryBtn.Location = new System.Drawing.Point(32, 42);
+            this.categoryBtn.Location = new System.Drawing.Point(34, 42);
             this.categoryBtn.Name = "categoryBtn";
             this.categoryBtn.Size = new System.Drawing.Size(283, 90);
             this.categoryBtn.TabIndex = 1;
@@ -108,7 +108,7 @@
             this.monthBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.monthBtn.Font = new System.Drawing.Font("Arial Black", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.monthBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.monthBtn.Location = new System.Drawing.Point(32, 179);
+            this.monthBtn.Location = new System.Drawing.Point(34, 178);
             this.monthBtn.Name = "monthBtn";
             this.monthBtn.Size = new System.Drawing.Size(283, 90);
             this.monthBtn.TabIndex = 3;
@@ -144,12 +144,12 @@
             legend1.Name = "Legend1";
             legend1.TableStyle = System.Windows.Forms.DataVisualization.Charting.LegendTableStyle.Wide;
             this.monthChart.Legends.Add(legend1);
-            this.monthChart.Location = new System.Drawing.Point(247, -12);
+            this.monthChart.Location = new System.Drawing.Point(249, -11);
             this.monthChart.Name = "monthChart";
             this.monthChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
             this.monthChart.PaletteCustomColors = new System.Drawing.Color[] {
         System.Drawing.Color.DeepSkyBlue};
-            this.monthChart.Size = new System.Drawing.Size(2345, 1416);
+            this.monthChart.Size = new System.Drawing.Size(2312, 1416);
             this.monthChart.TabIndex = 5;
             this.monthChart.Text = "chart1";
             // 

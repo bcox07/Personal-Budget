@@ -73,7 +73,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Category.cs" />
+    <Compile Include="ChartCreation.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="DatabaseCalls.cs" />
     <Compile Include="PaymentWindow.cs">
       <SubType>Form</SubType>
     </Compile>
