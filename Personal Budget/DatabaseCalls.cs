@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.OleDb;
 using System.Linq;
 using System.Text;
@@ -31,6 +32,20 @@ namespace Personal_Budget
             temp = String.Format("{0}", reader["TransactionDate"]);
             connection.Close();
             return temp;
+        }
+
+        public static void GetIncome(OleDbDataAdapter adapter, DataSet ds)
+        {
+            String sql = @" SELECT * 
+                            FROM 
+                                Income 
+                            ORDER BY 
+                                IncomeDate DESC";
+            adapter = new OleDbDataAdapter(sql, connection);
+            connection.Open();
+            adapter.Fill(ds, "Income");
+            connection.Close();
+            
         }
 
         public static String GetEarliestIncome()
@@ -76,11 +91,11 @@ namespace Personal_Budget
             string connString = null;
             if (year == "Total")
             {
-                connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE TransactionMonth = @Month GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
+                connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE FORMAT(TransactionMonth, 'MMMM') = @Month GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
 
                 if (table == "Income")
                 {
-                    connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE IncomeMonth = @Month GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
+                    connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE FORMAT(IncomeDate, 'MMMM') = @Month GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
                 }
             }
             else
@@ -96,11 +111,11 @@ namespace Personal_Budget
                 }
                 else
                 {
-                    connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE TransactionMonth = @Month AND YEAR(TransactionDate) = " + year + " GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
+                    connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE FORMAT(TransactionMonth, 'MMMM') = @Month AND YEAR(TransactionDate) = " + year + " GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
 
                     if (table == "Income")
                     {
-                        connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE IncomeMonth = @Month AND YEAR(IncomeDate) = " + year + " GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
+                        connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE FORMAT(IncomeDate, 'MMMM') = @Month AND YEAR(IncomeDate) = " + year + " GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
                     }
                 }
             }

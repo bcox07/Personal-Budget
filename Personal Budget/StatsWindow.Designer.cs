@@ -269,7 +269,7 @@
             // 
             this.yearChooser.Font = new System.Drawing.Font("Arial Black", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.yearChooser.FormattingEnabled = true;
-            this.yearChooser.Location = new System.Drawing.Point(1285, 12);
+            this.yearChooser.Location = new System.Drawing.Point(1818, 81);
             this.yearChooser.Name = "yearChooser";
             this.yearChooser.Size = new System.Drawing.Size(189, 49);
             this.yearChooser.TabIndex = 12;
