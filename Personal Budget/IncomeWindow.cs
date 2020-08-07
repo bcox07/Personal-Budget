@@ -2,21 +2,26 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SqlClient;
-using System.Data.OleDb;
+using MySql.Data.MySqlClient;
+using Personal_Budget.Models;
 
 namespace Personal_Budget
 {
     public partial class IncomeWindow : Form
     {
         DataSet ds = new DataSet();
-        OleDbDataAdapter dataadapter;
+        MySqlDataAdapter dataadapter;
         Income income = new Income();
+
+        static List<Recipient> recipients;
+        static List<Category> categories;
+        static List<RecipientCategory> recipientCategories;
+
+        static Recipient recipient;
+        static Category category;
+        static RecipientCategory recipientCategory;
 
         public IncomeWindow()
         {
@@ -34,7 +39,21 @@ namespace Personal_Budget
 
             incomeGridView.DataSource = ds.Tables[0];
             incomeGridView.Columns[2].DefaultCellStyle.Format = "C";
-           
+            incomeGridView.Columns["Payment"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+
+            incomeGridView.Columns["Id"].Width = 50;
+            incomeGridView.Columns["Recipient"].Width = 140;
+            incomeGridView.Columns["TransactionDate"].Width = 140;
+
+            recipients = Recipient.GetRecipients();
+            categories = Category.GetCategories();
+
+            foreach (Category category in categories)
+            {
+                categoryBox.Items.Add(category.Name);
+            }
+
+
             foreach (DataGridViewColumn column in incomeGridView.Columns)
             {
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
@@ -44,8 +63,34 @@ namespace Personal_Budget
         private void transactionBtn_Click(object sender, EventArgs e)
         {
             income.GetNewestIncome();
+            recipients = Recipient.GetRecipients();
 
-            income.PaidFrom = paidFromBox.Text;
+            income.RecipientId = recipients.Find(r => r.Name == recipientBox.Text)?.RecipientId;
+            category.CategoryId = categories.Find(c => c.Name == categoryBox.Text)?.CategoryId;
+
+            if (income.RecipientId == null)
+            {
+                recipient = new Recipient
+                {
+                    Name = recipientBox.Text
+                };
+                recipient.Add();
+
+                income.RecipientId = recipient.RecipientId;
+            }
+
+            if (category.CategoryId == null)
+            {
+                category = new Category
+                {
+                    Name = categoryBox.Text
+                };
+                category.Add();
+
+                income.RecipientId = recipient.RecipientId;
+            }
+
+
             income.Payment = Convert.ToDouble(paymentBox.Text);
             income.PaymentDate = transactionDatePicker.Text;
 
@@ -72,12 +117,24 @@ namespace Personal_Budget
 
         private void incomeGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            categories = Category.GetCategories();
+            recipientCategories = RecipientCategory.GetRecipientCategories();
             if (e.RowIndex == -1) return;
+
+            Income income = new Income();
+            income.Id = Convert.ToInt32(incomeGridView.Rows[e.RowIndex].Cells[0].Value);
+
+            income.Get();
+
+            recipientCategory = recipientCategories.Find(r => r.RecipientId == income.RecipientId);
+            category = categories.Find(c => c.CategoryId == recipientCategory?.CategoryId);
+
             incomeGridView.Rows[e.RowIndex].Selected = true;
             IDBox.Text = incomeGridView.Rows[e.RowIndex].Cells[0].Value.ToString();
-            paidFromBox.Text = incomeGridView.Rows[e.RowIndex].Cells[1].Value.ToString();
-            paymentBox.Text = incomeGridView.Rows[e.RowIndex].Cells[2].Value.ToString();
-            transactionDatePicker.Text = incomeGridView.Rows[e.RowIndex].Cells[3].Value.ToString();
+            categoryBox.Text = category?.Name;
+            recipientBox.Text = incomeGridView.Rows[e.RowIndex].Cells["Recipient"].Value.ToString();
+            paymentBox.Text = incomeGridView.Rows[e.RowIndex].Cells["Payment"].Value.ToString().Substring(1);
+            transactionDatePicker.Text = incomeGridView.Rows[e.RowIndex].Cells["TransactionDate"].Value.ToString();
 
         }
 
@@ -124,11 +181,10 @@ namespace Personal_Budget
 
         private void updateBtn_Click(object sender, EventArgs e)
         {
-
             income = new Income
             {
                 Id = int.Parse(IDBox.Text),
-                PaidFrom = paidFromBox.Text,
+                RecipientId = recipients.Find(r => r.Name == recipientBox.Text).RecipientId,
                 Payment = Convert.ToDouble(paymentBox.Text),
                 PaymentDate = transactionDatePicker.Text
             };
@@ -150,6 +206,19 @@ namespace Personal_Budget
             else if (Application.OpenForms.OfType<MainMenu>().Count() > 1)
             {
                 Application.OpenForms.OfType<MainMenu>().First().Close();
+            }
+        }
+
+        private void categoryBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Category category = Category.GetCategories().Find(c => c.Name == categoryBox.Text);
+
+            recipients = Recipient.GetRecipients(category?.CategoryId);
+
+            recipientBox.Items.Clear();
+            foreach (Recipient recipient in recipients)
+            {
+                recipientBox.Items.Add(recipient.Name);
             }
         }
     }

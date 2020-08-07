@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SqlClient;
-using System.Data.OleDb;
+using MySql.Data.MySqlClient;
+using Personal_Budget.Models;
 
 namespace Personal_Budget
 {
@@ -16,10 +13,27 @@ namespace Personal_Budget
     {
         DataSet ds = new DataSet();
         static Connection dbConnection = new Connection();       
-        String sql = "SELECT * FROM Payments ORDER BY TransactionDate DESC";
-        OleDbConnection connection = new OleDbConnection(dbConnection.getConnection());
-        OleDbDataAdapter dataadapter;
-        
+        String sql = @" SELECT 
+	                        payment.Id, 
+	                        account.Account, 
+                            category.Category, 
+                            recipient.Recipient,
+                            payment.Payment,
+                            TransactionDate
+                        FROM payment
+                        INNER JOIN account ON
+	                        account.AccountId = payment.AccountId
+                        INNER JOIN category ON
+	                        category.CategoryId = payment.CategoryId
+                        INNER JOIN recipient ON
+	                        recipient.RecipientId = payment.RecipientId
+                        ORDER BY TransactionDate DESC";
+        MySqlConnection connection = new MySqlConnection(dbConnection.getConnection());
+        MySqlDataAdapter dataadapter;
+
+        static List<Recipient> recipients = Recipient.GetRecipients();
+        static List<Account> accounts = Account.GetAccounts();
+        static List<Category> categories = Category.GetCategories();
 
         public PaymentWindow()
         {
@@ -29,30 +43,30 @@ namespace Personal_Budget
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            String[] sort = {"PaymentAccount", "Category", "Payment", "PaidTo", "TransactionDate"};
+            string[] sort = {"PaymentAccount", "Category", "Payment", "PaidTo", "TransactionDate"};
             transactionDatePicker.Format = DateTimePickerFormat.Custom;
             transactionDatePicker.CustomFormat = "yyyy-MM-dd";
 
+            List<Category> categories = DatabaseCalls.GetCategories();
 
-            dataadapter = new OleDbDataAdapter(sql, connection);
+            dataadapter = new MySqlDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();
             budgetGridView.DataSource = ds.Tables[0];
 
-            budgetGridView.Columns[3].DefaultCellStyle.Format = "C";
+            budgetGridView.Columns[4].DefaultCellStyle.Format = "C";
+            budgetGridView.Columns[4].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
-            categoryBox.Items.Add("Auto");
-            categoryBox.Items.Add("Dining");
-            categoryBox.Items.Add("Entertainment");
-            categoryBox.Items.Add("Gas");
-            categoryBox.Items.Add("Grocery");
-            categoryBox.Items.Add("Healthcare");
-            categoryBox.Items.Add("Interest");
-            categoryBox.Items.Add("Online");
-            categoryBox.Items.Add("Other");
-            categoryBox.Items.Add("Phone");
-            categoryBox.Items.Add("Rent");
+            budgetGridView.Columns[0].Width = 50;
+            budgetGridView.Columns[2].Width = 120;
+            budgetGridView.Columns[3].Width = 160;
+            budgetGridView.Columns[5].Width = 130;
+
+            foreach (Category category in categories)
+            {
+                categoryBox.Items.Add(category.Name);
+            }
         }
 
         private void budgetGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -98,86 +112,19 @@ namespace Personal_Budget
 
         private void transactionBtn_Click(object sender, EventArgs e)
         {             
-            String account, category, paidTo, date, month, temp;
-            Double payment = 0;
-            DateTime monthDate;
-            int transactionID = 0;
-            
-            account = category = paidTo = temp = date = month = "";
-            account = category = paidTo = temp = date = month = "";
-
-            account = paymentAcctBox.Text;
-            category = categoryBox.Text;
-            temp = paymentBox.Text;
-            payment = Convert.ToDouble(temp);
-            paidTo = paidToBox.Text;
-            date = transactionDatePicker.Text;
-            monthDate = Convert.ToDateTime(date);
-
-            switch (monthDate.Month)
+            Payment payment = new Payment
             {
-                case 1:
-                    month = "January";
-                    break;
-                case 2:
-                    month = "February";
-                    break;
-                case 3:
-                    month = "March";
-                    break;
-                case 4:
-                    month = "April";
-                    break;
-                case 5:
-                    month = "May";
-                    break;
-                case 6:
-                    month = "June";
-                    break;
-                case 7:
-                    month = "July";
-                    break;
-                case 8:
-                    month = "August";
-                    break;
-                case 9:
-                    month = "September";
-                    break;
-                case 10:
-                    month = "October";
-                    break;
-                case 11:
-                    month = "November";
-                    break;
-                case 12:
-                    month = "December";
-                    break;
+                AccountId = accounts.Find(a => a.Name == paymentAcctBox.Text).AccountId,
+                CategoryId = categories.Find(c => c.Name == categoryBox.Text).CategoryId,
+                RecipientId = recipients.Find(r => r.Name == paidToBox.Text).RecipientId,
+                Cost = Convert.ToDouble(paymentBox.Text),
+                TransactionDate = transactionDatePicker.Text
+            };
 
-            }
-
-            connection.Open();
-            OleDbCommand cmd = new OleDbCommand("SELECT TOP 1 TransactionID FROM Payments ORDER BY TransactionID DESC", connection);
-            OleDbDataReader reader = cmd.ExecuteReader();
-            reader.Read();
-            temp = String.Format("{0}", reader["TransactionID"]);
-            transactionID = Int32.Parse(temp) + 1;
-            connection.Close();
-            
-            cmd = new OleDbCommand("INSERT INTO Payments VALUES (@TransactionID, @PaymentAccount, @Category, @Payment, @PaidTo, @TransactionDate, @TransactionMonth)", connection);
-
-            connection.Open();
-            cmd.Parameters.AddWithValue("@TransactionID", transactionID);
-            cmd.Parameters.AddWithValue("@PaymentAccount", account);
-            cmd.Parameters.AddWithValue("@Category", category);
-            cmd.Parameters.AddWithValue("@Payment", payment);
-            cmd.Parameters.AddWithValue("@PaidTo", paidTo);
-            cmd.Parameters.AddWithValue("@TransactionDate", date);
-            cmd.Parameters.AddWithValue("@TransactionMonth", month);
-            cmd.ExecuteNonQuery();            
-            connection.Close();
+            payment.Insert();
 
             ds.Tables.Clear();
-            dataadapter = new OleDbDataAdapter(sql, connection);
+            dataadapter = new MySqlDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();
@@ -214,27 +161,20 @@ namespace Personal_Budget
 
         private void updateBtn_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(paymentAcctBox.Text);
-            Console.WriteLine(categoryBox.Text);
-            Console.WriteLine(paymentBox.Text);
-            Console.WriteLine(paidToBox.Text);
-            Console.WriteLine(transactionDatePicker.Text);
-            Console.WriteLine(IDBox.Text);
+            Payment payment = new Payment
+            {
+                Id = int.Parse(IDBox.Text),
+                AccountId = accounts.Find(a => a.Name == paymentAcctBox.Text).AccountId,
+                CategoryId = categories.Find(c => c.Name == categoryBox.Text).CategoryId,
+                RecipientId = recipients.Find(r => r.Name == paidToBox.Text).RecipientId,
+                Cost = Convert.ToDouble(paymentBox.Text),
+                TransactionDate = transactionDatePicker.Text
+            };
 
-            OleDbCommand cmd = new OleDbCommand("UPDATE Payments SET Account = @Account, Category = @Category, Payment = @Payment, PaidTo = @PaidTo, TransactionDate = @Date WHERE TransactionID =  @ID", connection);
-            cmd.Parameters.AddWithValue("@Account", paymentAcctBox.Text);
-            cmd.Parameters.AddWithValue("@Category", categoryBox.Text);
-            cmd.Parameters.AddWithValue("@Payment", paymentBox.Text);
-            cmd.Parameters.AddWithValue("@PaidTo", paidToBox.Text);
-            cmd.Parameters.AddWithValue("@Date", transactionDatePicker.Text);
-            cmd.Parameters.AddWithValue("@ID", IDBox.Text);
-
-            connection.Open();
-            cmd.ExecuteNonQuery();
-            connection.Close();
+            payment.Update();
 
             ds.Tables.Clear();
-            dataadapter = new OleDbDataAdapter(sql, connection);
+            dataadapter = new MySqlDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();
@@ -244,15 +184,15 @@ namespace Personal_Budget
 
         private void deleteBtn_Click(object sender, EventArgs e)
         {
-            OleDbCommand cmd = new OleDbCommand("DELETE FROM Payments WHERE TransactionID = @TransactionID", connection);
-            cmd.Parameters.AddWithValue("@TransactionID", IDBox.Text);
+            Payment payment = new Payment
+            {
+                Id = int.Parse(IDBox.Text)
+            };
 
-            connection.Open();
-            cmd.ExecuteNonQuery();
-            connection.Close();
+            payment.Delete();
 
             ds.Tables.Clear();
-            dataadapter = new OleDbDataAdapter(sql, connection);
+            dataadapter = new MySqlDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();
@@ -262,7 +202,7 @@ namespace Personal_Budget
         private void refreshBtn_Click(object sender, EventArgs e)
         {
             ds.Tables.Clear();
-            dataadapter = new OleDbDataAdapter(sql, connection);
+            dataadapter = new MySqlDataAdapter(sql, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();
@@ -273,22 +213,22 @@ namespace Personal_Budget
         {
             Boolean pAcctBoxCheck, cBoxCheck, pBoxCheck;
             pAcctBoxCheck = cBoxCheck = pBoxCheck = false;
-            String srch = "SELECT * FROM Payments WHERE ";
+            String srch = "SELECT * FROM payment WHERE ";
             if (paymentAcctBox.Text.Length > 0)
             {
                 pAcctBoxCheck = true;
-                srch += "Account = '" + paymentAcctBox.Text + "' ";
+                srch += "AccountId = " + accounts.Find(a => a.Name == paymentAcctBox.Text).AccountId + " ";
                 Console.WriteLine(srch);
             }
             if (categoryBox.SelectedIndex != -1 && pAcctBoxCheck == true)
             {
                 cBoxCheck = true;
-                srch += "AND Category = '" + categoryBox.Text + "' ";
+                srch += "AND CategoryId = " + categories.Find(c => c.Name == categoryBox.Text).CategoryId + " ";
             }
             else if (categoryBox.SelectedIndex != -1)
             {
                 cBoxCheck = true;
-                srch += "Category = '" + categoryBox.Text + "' ";
+                srch += "CategoryId = " + categories.Find(c => c.Name == categoryBox.Text).CategoryId + " ";
             }
             if (paymentBox.Text.Length > 0 && (pAcctBoxCheck == true || cBoxCheck == true))
             {
@@ -302,15 +242,15 @@ namespace Personal_Budget
             }
             if (paidToBox.Text.Length > 0 && (pAcctBoxCheck == true || cBoxCheck == true || pBoxCheck == true))
             {
-                srch += "AND PaidTo = '" + paidToBox.Text + "'";
+                srch += "AND RecipientId = " + recipients.Find(r => r.Name == paidToBox.Text).RecipientId;
             }
             else if (paidToBox.Text.Length > 0)
             {
-                srch += "PaidTo = '" + paidToBox.Text + "'";
+                srch += "RecipientId = " + recipients.Find(r => r.Name == paidToBox.Text).RecipientId;
             }
 
             ds.Tables.Clear();
-            dataadapter = new OleDbDataAdapter(srch, connection);
+            dataadapter = new MySqlDataAdapter(srch, connection);
             connection.Open();
             dataadapter.Fill(ds, "Budget");
             connection.Close();

@@ -28,65 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StatsWindow));
-            this.categoryChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.categoryBtn = new System.Windows.Forms.Button();
             this.monthBtn = new System.Windows.Forms.Button();
             this.paidToBtn = new System.Windows.Forms.Button();
-            this.monthChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.paidToChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label1 = new System.Windows.Forms.Label();
             this.backBtn = new System.Windows.Forms.Button();
             this.paidFromBtn = new System.Windows.Forms.Button();
-            this.paidFromChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.monthChooser = new System.Windows.Forms.ComboBox();
             this.yearChooser = new System.Windows.Forms.ComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.categoryChart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.monthChart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.paidToChart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.paidFromChart)).BeginInit();
+            this.monthChart = new System.Windows.Forms.Integration.ElementHost();
+            this.monthLiveChart = new LiveCharts.Wpf.CartesianChart();
+            this.categoryChart1 = new System.Windows.Forms.Integration.ElementHost();
+            this.categoryLiveChart = new LiveCharts.Wpf.PieChart();
+            this.incomeChart1 = new System.Windows.Forms.Integration.ElementHost();
+            this.incomeLiveChart = new LiveCharts.Wpf.PieChart();
+            this.paymentChart1 = new System.Windows.Forms.Integration.ElementHost();
+            this.paymentLiveChart = new LiveCharts.Wpf.PieChart();
             this.SuspendLayout();
-            // 
-            // categoryChart
-            // 
-            this.categoryChart.BackColor = System.Drawing.Color.Transparent;
-            this.categoryChart.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.categoryChart.BackSecondaryColor = System.Drawing.Color.Transparent;
-            this.categoryChart.BorderlineColor = System.Drawing.Color.Transparent;
-            chartArea1.Name = "ChartArea1";
-            this.categoryChart.ChartAreas.Add(chartArea1);
-            this.categoryChart.IsSoftShadows = false;
-            this.categoryChart.Location = new System.Drawing.Point(309, -50);
-            this.categoryChart.Name = "categoryChart";
-            this.categoryChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
-            this.categoryChart.PaletteCustomColors = new System.Drawing.Color[] {
-        System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(54))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(154)))), ((int)(((byte)(71)))), ((int)(((byte)(50))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(88)))), ((int)(((byte)(111))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(132)))), ((int)(((byte)(166))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(146)))), ((int)(((byte)(156)))), ((int)(((byte)(80))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(181)))), ((int)(((byte)(106))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(88)))), ((int)(((byte)(62))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(122)))), ((int)(((byte)(101))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(89)))), ((int)(((byte)(157)))), ((int)(((byte)(192))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(126)))), ((int)(((byte)(179)))), ((int)(((byte)(195))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(199)))), ((int)(((byte)(206)))), ((int)(((byte)(155))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(222)))), ((int)(((byte)(189)))))};
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Doughnut;
-            series1.Name = "Series1";
-            this.categoryChart.Series.Add(series1);
-            this.categoryChart.Size = new System.Drawing.Size(2304, 1480);
-            this.categoryChart.TabIndex = 0;
-            this.categoryChart.Text = "chart1";
             // 
             // categoryBtn
             // 
@@ -131,58 +90,6 @@
             this.paidToBtn.UseVisualStyleBackColor = false;
             this.paidToBtn.Click += new System.EventHandler(this.paidToBtn_Click);
             // 
-            // monthChart
-            // 
-            this.monthChart.BackColor = System.Drawing.Color.Transparent;
-            chartArea2.Name = "ChartArea1";
-            this.monthChart.ChartAreas.Add(chartArea2);
-            legend1.BackColor = System.Drawing.Color.Transparent;
-            legend1.DockedToChartArea = "ChartArea1";
-            legend1.Font = new System.Drawing.Font("Arial Black", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            legend1.ForeColor = System.Drawing.Color.White;
-            legend1.IsTextAutoFit = false;
-            legend1.Name = "Legend1";
-            legend1.TableStyle = System.Windows.Forms.DataVisualization.Charting.LegendTableStyle.Wide;
-            this.monthChart.Legends.Add(legend1);
-            this.monthChart.Location = new System.Drawing.Point(249, -11);
-            this.monthChart.Name = "monthChart";
-            this.monthChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
-            this.monthChart.PaletteCustomColors = new System.Drawing.Color[] {
-        System.Drawing.Color.DeepSkyBlue};
-            this.monthChart.Size = new System.Drawing.Size(2312, 1416);
-            this.monthChart.TabIndex = 5;
-            this.monthChart.Text = "chart1";
-            // 
-            // paidToChart
-            // 
-            this.paidToChart.BackColor = System.Drawing.Color.Transparent;
-            this.paidToChart.BorderlineColor = System.Drawing.Color.Transparent;
-            this.paidToChart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            this.paidToChart.BorderlineWidth = 5;
-            chartArea3.Name = "ChartArea1";
-            this.paidToChart.ChartAreas.Add(chartArea3);
-            this.paidToChart.Location = new System.Drawing.Point(309, -49);
-            this.paidToChart.Name = "paidToChart";
-            this.paidToChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
-            this.paidToChart.PaletteCustomColors = new System.Drawing.Color[] {
-        System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(54))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(154)))), ((int)(((byte)(71)))), ((int)(((byte)(50))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(88)))), ((int)(((byte)(111))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(132)))), ((int)(((byte)(166))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(146)))), ((int)(((byte)(156)))), ((int)(((byte)(80))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(181)))), ((int)(((byte)(106))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(88)))), ((int)(((byte)(62))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(122)))), ((int)(((byte)(101))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(89)))), ((int)(((byte)(157)))), ((int)(((byte)(192))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(126)))), ((int)(((byte)(179)))), ((int)(((byte)(195)))))};
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Doughnut;
-            series2.Name = "Series1";
-            this.paidToChart.Series.Add(series2);
-            this.paidToChart.Size = new System.Drawing.Size(2304, 1480);
-            this.paidToChart.TabIndex = 6;
-            this.paidToChart.Text = "chart1";
-            // 
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(107)))), ((int)(((byte)(135)))));
@@ -225,41 +132,11 @@
             this.paidFromBtn.UseVisualStyleBackColor = false;
             this.paidFromBtn.Click += new System.EventHandler(this.paidFromBtn_Click);
             // 
-            // paidFromChart
-            // 
-            this.paidFromChart.BackColor = System.Drawing.Color.Transparent;
-            this.paidFromChart.BorderlineColor = System.Drawing.Color.Transparent;
-            this.paidFromChart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            this.paidFromChart.BorderlineWidth = 5;
-            chartArea4.Name = "ChartArea1";
-            this.paidFromChart.ChartAreas.Add(chartArea4);
-            this.paidFromChart.Location = new System.Drawing.Point(309, -49);
-            this.paidFromChart.Name = "paidFromChart";
-            this.paidFromChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
-            this.paidFromChart.PaletteCustomColors = new System.Drawing.Color[] {
-        System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(54))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(154)))), ((int)(((byte)(71)))), ((int)(((byte)(50))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(88)))), ((int)(((byte)(111))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(132)))), ((int)(((byte)(166))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(146)))), ((int)(((byte)(156)))), ((int)(((byte)(80))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(181)))), ((int)(((byte)(106))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(88)))), ((int)(((byte)(62))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(122)))), ((int)(((byte)(101))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(89)))), ((int)(((byte)(157)))), ((int)(((byte)(192))))),
-        System.Drawing.Color.FromArgb(((int)(((byte)(126)))), ((int)(((byte)(179)))), ((int)(((byte)(195)))))};
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Doughnut;
-            series3.Name = "Series1";
-            this.paidFromChart.Series.Add(series3);
-            this.paidFromChart.Size = new System.Drawing.Size(2304, 1480);
-            this.paidFromChart.TabIndex = 10;
-            this.paidFromChart.Text = "chart1";
-            // 
             // monthChooser
             // 
             this.monthChooser.Font = new System.Drawing.Font("Arial Black", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.monthChooser.FormattingEnabled = true;
-            this.monthChooser.Location = new System.Drawing.Point(1370, 661);
+            this.monthChooser.Location = new System.Drawing.Point(1330, 680);
             this.monthChooser.Name = "monthChooser";
             this.monthChooser.Size = new System.Drawing.Size(189, 49);
             this.monthChooser.TabIndex = 11;
@@ -275,6 +152,42 @@
             this.yearChooser.TabIndex = 12;
             this.yearChooser.SelectedIndexChanged += new System.EventHandler(this.yearChooser_SelectedIndexChanged_1);
             // 
+            // monthChart
+            // 
+            this.monthChart.Location = new System.Drawing.Point(377, 22);
+            this.monthChart.Name = "monthChart";
+            this.monthChart.Size = new System.Drawing.Size(2171, 1313);
+            this.monthChart.TabIndex = 13;
+            this.monthChart.Text = "elementHost1";
+            this.monthChart.Child = this.monthLiveChart;
+            // 
+            // categoryChart1
+            // 
+            this.categoryChart1.Location = new System.Drawing.Point(703, 22);
+            this.categoryChart1.Name = "categoryChart1";
+            this.categoryChart1.Size = new System.Drawing.Size(1521, 1340);
+            this.categoryChart1.TabIndex = 14;
+            this.categoryChart1.Text = "elementHost1";
+            this.categoryChart1.Child = this.categoryLiveChart;
+            // 
+            // incomeChart1
+            // 
+            this.incomeChart1.Location = new System.Drawing.Point(703, 22);
+            this.incomeChart1.Name = "incomeChart1";
+            this.incomeChart1.Size = new System.Drawing.Size(1521, 1340);
+            this.incomeChart1.TabIndex = 15;
+            this.incomeChart1.Text = "elementHost2";
+            this.incomeChart1.Child = this.incomeLiveChart;
+            // 
+            // paymentChart1
+            // 
+            this.paymentChart1.Location = new System.Drawing.Point(703, 22);
+            this.paymentChart1.Name = "paymentChart1";
+            this.paymentChart1.Size = new System.Drawing.Size(1521, 1340);
+            this.paymentChart1.TabIndex = 16;
+            this.paymentChart1.Text = "elementHost3";
+            this.paymentChart1.Child = this.paymentLiveChart;
+            // 
             // StatsWindow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -288,9 +201,9 @@
             this.Controls.Add(this.paidToBtn);
             this.Controls.Add(this.monthBtn);
             this.Controls.Add(this.categoryBtn);
-            this.Controls.Add(this.categoryChart);
-            this.Controls.Add(this.paidToChart);
-            this.Controls.Add(this.paidFromChart);
+            this.Controls.Add(this.paymentChart1);
+            this.Controls.Add(this.incomeChart1);
+            this.Controls.Add(this.categoryChart1);
             this.Controls.Add(this.monthChart);
             this.Controls.Add(this.label1);
             this.ForeColor = System.Drawing.Color.Maroon;
@@ -299,27 +212,26 @@
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Statistics";
             this.Load += new System.EventHandler(this.StatsWindow_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.categoryChart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.monthChart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.paidToChart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.paidFromChart)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.DataVisualization.Charting.Chart categoryChart;
         private System.Windows.Forms.Button categoryBtn;
         private System.Windows.Forms.Button monthBtn;
         private System.Windows.Forms.Button paidToBtn;
-        private System.Windows.Forms.DataVisualization.Charting.Chart monthChart;
-        private System.Windows.Forms.DataVisualization.Charting.Chart paidToChart;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button backBtn;
         private System.Windows.Forms.Button paidFromBtn;
-        private System.Windows.Forms.DataVisualization.Charting.Chart paidFromChart;
         private System.Windows.Forms.ComboBox monthChooser;
         private System.Windows.Forms.ComboBox yearChooser;
+        private System.Windows.Forms.Integration.ElementHost monthChart;
+        private LiveCharts.Wpf.CartesianChart monthLiveChart;
+        private System.Windows.Forms.Integration.ElementHost categoryChart1;
+        private LiveCharts.Wpf.PieChart categoryLiveChart;
+        private System.Windows.Forms.Integration.ElementHost incomeChart1;
+        private System.Windows.Forms.Integration.ElementHost paymentChart1;
+        private LiveCharts.Wpf.PieChart paymentLiveChart;
+        private LiveCharts.Wpf.PieChart incomeLiveChart;
     }
 }

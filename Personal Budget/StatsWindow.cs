@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
-using System.Data.OleDb;
+using LiveCharts;
+using LiveCharts.Wpf;
+using Personal_Budget.Models;
 
 namespace Personal_Budget
 {
@@ -19,15 +20,19 @@ namespace Personal_Budget
 
         static String[] monthName = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
-        String monthPaymentSeries = "Cost";
-        String monthIncomeSeries = "Income";
-        String netSeries = "Net";
-        String categorySeries = "Category";
-        String paidToSeries = "Paid To";
-        String paidFromSeries = "Paid From";
-
         Point defaultYearPoint;
         Point yearPoint;
+
+        ChartValues<double> paymentChart = new ChartValues<double>();
+        ChartValues<double> incomeChart = new ChartValues<double>();
+        ChartValues<double> netChart = new ChartValues<double>();
+
+        List<string> xAxis = new List<string>();
+
+        Category category = new Category();
+        Recipient paidTo = new Recipient();
+        Recipient paidFrom = new Recipient();
+
 
         public StatsWindow()
         {
@@ -100,6 +105,7 @@ namespace Personal_Budget
                 return;
             }
 
+            
             DateTime curr = DateTime.Today;
             String tempYear = curr.ToString("yyyy");
 
@@ -112,9 +118,9 @@ namespace Personal_Budget
             yearChooser.SelectedIndex = yearChooser.Items.Count - 1;
 
             monthChart.Visible = false;
-            categoryChart.Visible = false;
-            paidToChart.Visible = false;
-            paidFromChart.Visible = false;
+            categoryChart1.Visible = false;
+            paymentChart1.Visible = false;
+            incomeChart1.Visible = false;
             yearChooser.Visible = false;
             monthChooser.Visible = false;
 
@@ -136,26 +142,70 @@ namespace Personal_Budget
             monthChooser.SelectedIndex = monthChooser.Items.Count - 1;
 
             DatabaseCalls.FillMonthArrays(yearChooser.SelectedItem.ToString(), paymentMonths, incomeMonths, netMonths);
-            ChartCreation.CustomizeMonthChart(monthChart, monthPaymentSeries, monthIncomeSeries, netSeries);
-            ChartCreation.FillMonthChart(monthChart, paymentMonths, monthPaymentSeries);
-            ChartCreation.FillMonthChart(monthChart, incomeMonths, monthIncomeSeries);
-            ChartCreation.FillMonthChart(monthChart, netMonths, netSeries);
 
-            DatabaseCalls.FillArray("Category", "Payments", categories);
-            DatabaseCalls.FillArray("PaidTo", "Payments", payments);
-            DatabaseCalls.FillArray("PaidFrom", "Income", incomes);         
+            ChartCreation.CustomizeMonthChart(monthLiveChart, xAxis);
+            ChartCreation.FillMonthChart(paymentChart, paymentMonths);
+            ChartCreation.FillMonthChart(incomeChart, incomeMonths);
+            ChartCreation.FillMonthChart(netChart, netMonths);
 
-            ChartCreation.FillChart(categories, categoryChart, categorySeries);
-            ChartCreation.FillChart(payments, paidToChart, paidToSeries);
-            ChartCreation.FillChart(incomes, paidFromChart, paidFromSeries);
+            foreach (Category category in netMonths)
+            {
+                xAxis.Add(category.Name);
+            }
+
+            monthLiveChart.LegendLocation = LegendLocation.Top;
+            monthLiveChart.FontSize = 20;
+
+            monthLiveChart.Series = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Income",
+                    Values = incomeChart,
+                    PointForeground = System.Windows.Media.Brushes.DodgerBlue,
+                    PointGeometrySize = 15,
+                    StrokeThickness = 5,
+                    Fill = System.Windows.Media.Brushes.Transparent
+                },
+                new LineSeries
+                {
+                    Title = "Payments",
+                    Values = paymentChart,
+                    Stroke = System.Windows.Media.Brushes.Firebrick,
+                    StrokeThickness = 5,
+                    PointForeground = System.Windows.Media.Brushes.Firebrick,
+                    PointGeometrySize = 15,
+                    Fill = System.Windows.Media.Brushes.Transparent
+                },
+                new LineSeries
+                {
+                    Title = "Profit",
+                    Values = netChart,
+                    Stroke = System.Windows.Media.Brushes.Goldenrod,
+                    StrokeThickness = 5,
+                    PointForeground = System.Windows.Media.Brushes.Goldenrod,
+                    PointGeometrySize = 15,
+                    Fill = System.Windows.Media.Brushes.Transparent
+                }
+
+            };
+
+
+            category.GetTop();
+            paidTo.GetTopPayments();
+            paidFrom.GetTopIncomes();
+
+            ChartCreation.FillChart(categoryLiveChart, category.Categories);
+            ChartCreation.FillChart(paymentLiveChart, paidTo.Recipients);
+            ChartCreation.FillChart(incomeLiveChart, paidFrom.Recipients);
         }
 
         private void paidToBtn_Click(object sender, EventArgs e)
         {
             monthChart.Visible = false;
-            categoryChart.Visible = false;
-            paidToChart.Visible = true;
-            paidFromChart.Visible = false;
+            categoryChart1.Visible = false;
+            paymentChart1.Visible = true;
+            incomeChart1.Visible = false;
             yearChooser.Visible = true;
             yearChooser.Location = yearPoint;
             monthChooser.Visible = false;
@@ -164,9 +214,9 @@ namespace Personal_Budget
         private void paidFromBtn_Click(object sender, EventArgs e)
         {
             monthChart.Visible = false;
-            categoryChart.Visible = false;
-            paidToChart.Visible = false;
-            paidFromChart.Visible = true;
+            categoryChart1.Visible = false;
+            paymentChart1.Visible = false;
+            incomeChart1.Visible = true;
             yearChooser.Visible = true;
             yearChooser.Location = yearPoint;
             monthChooser.Visible = false;
@@ -175,9 +225,9 @@ namespace Personal_Budget
         private void categoryBtn_Click(object sender, EventArgs e)
         {
             monthChart.Visible = false;
-            categoryChart.Visible = true;
-            paidToChart.Visible = false;
-            paidFromChart.Visible = false;
+            categoryChart1.Visible = true;
+            paymentChart1.Visible = false;
+            incomeChart1.Visible = false;
             yearChooser.Visible = true;
             yearChooser.Location = yearPoint;
             monthChooser.Visible = false;
@@ -185,10 +235,10 @@ namespace Personal_Budget
 
         private void monthBtn_Click(object sender, EventArgs e)
         {
-            categoryChart.Visible = false;
             monthChart.Visible = true;
-            paidToChart.Visible = false;
-            paidFromChart.Visible = false;
+            categoryChart1.Visible = false;
+            paymentChart1.Visible = false;
+            incomeChart1.Visible = false;
             yearChooser.Visible = true;
             yearChooser.Location = defaultYearPoint;
             monthChooser.Visible = false;
@@ -212,52 +262,53 @@ namespace Personal_Budget
             if (yearChooser.SelectedItem.Equals("Total"))
             {
                 monthChooser.Visible = false;
-                DatabaseCalls.FillArray("Category", "Payments", categories);
-                DatabaseCalls.FillArray("PaidTo", "Payments", payments);
-                DatabaseCalls.FillArray("PaidFrom", "Income", incomes);
+                category.GetTop();
+                paidTo.GetTopPayments();
+                paidFrom.GetTopIncomes();
 
-                ChartCreation.FillChart(categories, categoryChart, categorySeries);
-                ChartCreation.FillChart(payments, paidToChart, paidToSeries);
-                ChartCreation.FillChart(incomes, paidFromChart, paidFromSeries);
             }
             else
             {
-                if (monthChart.Visible != true)
+                if (monthChart.Visible == false)
                 {
                     monthChooser.Visible = true;
 
-                    DatabaseCalls.FillArrayByMonth("Category", "Payments", monthChooser.SelectedItem, yearChooser.SelectedItem.ToString(), categories);
-                    DatabaseCalls.FillArrayByMonth("PaidTo", "Payments", monthChooser.SelectedItem, yearChooser.SelectedItem.ToString(), payments);
-                    DatabaseCalls.FillArrayByMonth("PaidFrom", "Income", monthChooser.SelectedItem, yearChooser.SelectedItem.ToString(), incomes);
+                    category.GetTop(yearChooser.SelectedItem.ToString(), monthChooser.SelectedItem.ToString());
+                    paidTo.GetTopPayments(yearChooser.SelectedItem.ToString(), monthChooser.SelectedItem.ToString());
+                    paidFrom.GetTopIncomes(yearChooser.SelectedItem.ToString(), monthChooser.SelectedItem.ToString());
                 }
             }
 
             DatabaseCalls.FillMonthArrays(yearChooser.SelectedItem.ToString(), paymentMonths, incomeMonths, netMonths);
 
-            ChartCreation.CustomizeMonthChart(monthChart, monthPaymentSeries, monthIncomeSeries, netSeries);
-            ChartCreation.FillMonthChart(monthChart, paymentMonths, monthPaymentSeries);
-            ChartCreation.FillMonthChart(monthChart, incomeMonths, monthIncomeSeries);
-            ChartCreation.FillMonthChart(monthChart, netMonths, netSeries);
+            ChartCreation.CustomizeMonthChart(monthLiveChart, xAxis);
+            ChartCreation.FillMonthChart(paymentChart, paymentMonths);
+            ChartCreation.FillMonthChart(incomeChart, incomeMonths);
+            ChartCreation.FillMonthChart(netChart, netMonths);
+
+            ChartCreation.FillChart(categoryLiveChart, category.Categories);
+            ChartCreation.FillChart(paymentLiveChart, paidTo.Recipients);
+            ChartCreation.FillChart(incomeLiveChart, paidFrom.Recipients);
         }
 
         private void monthChooser_SelectedIndexChanged(object sender, EventArgs e)
         { 
             if (monthChooser.SelectedItem.Equals("Total"))
             {
-                DatabaseCalls.FillArray("Category", "Payments", categories);
-                DatabaseCalls.FillArray("PaidTo", "Payments", payments);
-                DatabaseCalls.FillArray("PaidFrom", "Income", incomes);
+                category.GetTop();
+                paidTo.GetTopPayments();
+                paidFrom.GetTopIncomes();
             }
             else
             {
-                DatabaseCalls.FillArrayByMonth("Category", "Payments", monthChooser.SelectedItem, yearChooser.SelectedItem.ToString(), categories);
-                DatabaseCalls.FillArrayByMonth("PaidTo", "Payments", monthChooser.SelectedItem, yearChooser.SelectedItem.ToString(), payments);
-                DatabaseCalls.FillArrayByMonth("PaidFrom", "Income", monthChooser.SelectedItem, yearChooser.SelectedItem.ToString(), incomes);
-            }  
-            
-            ChartCreation.FillChart(categories, categoryChart, categorySeries);
-            ChartCreation.FillChart(payments, paidToChart, paidToSeries);
-            ChartCreation.FillChart(incomes, paidFromChart, paidFromSeries);
+                category.GetTop(yearChooser.SelectedItem.ToString(), monthChooser.SelectedItem.ToString());
+                paidTo.GetTopPayments(yearChooser.SelectedItem.ToString(), monthChooser.SelectedItem.ToString());
+                paidFrom.GetTopIncomes(yearChooser.SelectedItem.ToString(), monthChooser.SelectedItem.ToString());
+            }
+
+            ChartCreation.FillChart(categoryLiveChart, category.Categories);
+            ChartCreation.FillChart(paymentLiveChart, paidTo.Recipients);
+            ChartCreation.FillChart(incomeLiveChart, paidFrom.Recipients);
         }  
 
     }

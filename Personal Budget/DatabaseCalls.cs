@@ -1,28 +1,27 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using Personal_Budget.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OleDb;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Personal_Budget
 {
     class DatabaseCalls
     {
         static Connection dbConnection = new Connection();
-        static OleDbConnection connection = new OleDbConnection(dbConnection.getConnection());
-        static OleDbCommand cmd;
-        static OleDbDataReader reader;
+        static MySqlConnection connection = new MySqlConnection(dbConnection.getConnection());
+        static MySqlCommand cmd;
+        static MySqlDataReader reader;
         public static String GetEarliestPayment()
         {
             String temp = "";
             //Earliest Payment date
-            cmd = new OleDbCommand(@"   SELECT TOP 1 
+            cmd = new MySqlCommand(@"   SELECT 
                                             TransactionDate 
-                                        FROM Payments 
+                                        FROM Payment
                                         ORDER BY 
-                                            TransactionDate",
+                                            TransactionDate
+                                        LIMIT 1",
                                             connection);
             connection.Open();
             cmd.ExecuteNonQuery();
@@ -34,14 +33,18 @@ namespace Personal_Budget
             return temp;
         }
 
-        public static void GetIncome(OleDbDataAdapter adapter, DataSet ds)
+        public static void GetIncome(MySqlDataAdapter adapter, DataSet ds)
         {
-            String sql = @" SELECT * 
-                            FROM 
-                                Income 
-                            ORDER BY 
-                                IncomeDate DESC";
-            adapter = new OleDbDataAdapter(sql, connection);
+            String sql = @" SELECT 
+	                            income.Id, 
+                                recipient.Recipient,
+                                CONCAT('$', income.Payment) AS Payment, 
+                                TransactionDate
+                            FROM income
+                            INNER JOIN recipient ON
+	                            recipient.RecipientId = income.RecipientId
+                            ORDER BY TransactionDate DESC";
+            adapter = new MySqlDataAdapter(sql, connection);
             connection.Open();
             adapter.Fill(ds, "Income");
             connection.Close();
@@ -52,22 +55,42 @@ namespace Personal_Budget
         {
             String temp = "";
             //Earliest Income date
-            cmd = new OleDbCommand("SELECT  TOP 1 IncomeDate FROM Income ORDER BY IncomeDate", connection);
+            cmd = new MySqlCommand("SELECT TransactionDate FROM income ORDER BY TransactionDate LIMIT 1", connection);
             connection.Open();
-            cmd.ExecuteNonQuery();
+            //cmd.ExecuteNonQuery();
             reader = cmd.ExecuteReader();
             reader.Read();
 
-            temp = String.Format("{0}", reader["IncomeDate"]);
+            temp = String.Format("{0}", reader["TransactionDate"]);
             connection.Close();
             return temp;
+        }
+
+        public static List<Category> GetCategories()
+        {
+            List<Category> categories = new List<Category>();
+            string connString = ("SELECT DISTINCT Category FROM Category");
+            cmd = new MySqlCommand(connString, connection);
+            connection.Open();
+            reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Category category = new Category
+                {
+                    Name = String.Format("{0}", reader["Category"]),
+                };
+                categories.Add(category);
+            }
+            connection.Close();
+            return categories;
         }
 
         public static void FillArray(String type, String table, List<Category> categories)
         {
             categories.Clear();
             string connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
-            cmd = new OleDbCommand(connString, connection);
+            cmd = new MySqlCommand(connString, connection);
             connection.Open();
             reader = cmd.ExecuteReader();
 
@@ -76,7 +99,7 @@ namespace Personal_Budget
                 Category category = new Category
                 {
                     Name = String.Format("{0}", reader[type]),
-                    Cost = String.Format("{0}", reader["TotalPayment"])
+                    Cost = Convert.ToString(reader["TotalPayment"])
                 };
                 categories.Add(category);
             }
@@ -102,11 +125,48 @@ namespace Personal_Budget
             {
                 if (month == null || month.ToString() == "Total")
                 {
-                    connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE YEAR(TransactionDate) = " + year + " GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
-
+                    if (table.ToLower() == "payment")
+                    {
+                        if (type == "Category")
+                        {
+                            connString = (@"SELECT 
+	                                            category.Category, 
+                                                SUM(Payment) AS TotalPayment 
+                                            FROM payment 
+                                            INNER JOIN category ON
+	                                            category.CategoryId = payment.CategoryId
+                                            WHERE YEAR(TransactionDate) = @Year 
+                                            GROUP BY Category 
+                                            ORDER BY SUM(Payment) DESC
+                                            LIMIT 6");
+                        }
+                        else
+                        {
+                            connString = (@"SELECT 
+	                                        recipient.Recipient AS PaidTo, 
+                                            SUM(Payment) AS TotalPayment 
+                                        FROM payment 
+                                        INNER JOIN recipient ON
+	                                        recipient.RecipientId = payment.RecipientId
+                                        WHERE YEAR(TransactionDate) = 2020 
+                                        GROUP BY Recipient 
+                                        ORDER BY SUM(Payment) DESC
+                                        LIMIT 6;");
+                        }
+                        
+                    }
                     if (table == "Income")
                     {
-                        connString = ("SELECT TOP 6 " + type + ", SUM(Payment) AS TotalPayment FROM " + table + " WHERE YEAR(IncomeDate) = " + year + " GROUP BY " + type + " ORDER BY SUM(Payment) DESC");
+                        connString = (@"SELECT 
+	                                        recipient.Recipient AS PaidFrom, 
+                                            SUM(income.Payment) AS TotalPayment 
+                                        FROM income 
+                                        INNER JOIN recipient ON
+	                                        recipient.RecipientId = income.RecipientId
+                                        WHERE YEAR(TransactionDate) = @Year
+                                        GROUP BY recipient.Recipient 
+                                        ORDER BY SUM(income.Payment) DESC
+                                        LIMIT 6");
                     }
                 }
                 else
@@ -122,10 +182,18 @@ namespace Personal_Budget
 
             
 
-            connection = new OleDbConnection(dbConnection.getConnection());
+            connection = new MySqlConnection(dbConnection.getConnection());
             connection.Open();
-            cmd = new OleDbCommand(connString, connection);
-            cmd.Parameters.AddWithValue("@Month", month);
+            cmd = new MySqlCommand(connString, connection);
+            if (year != "Total")
+            {
+                cmd.Parameters.AddWithValue("@Year", year);
+            }
+            if (month != null && month.ToString() != "Total")
+            {
+                cmd.Parameters.AddWithValue("@Month", month);
+            }
+            
             cmd.ExecuteNonQuery();
 
             reader = cmd.ExecuteReader();
@@ -135,7 +203,7 @@ namespace Personal_Budget
                 Category category = new Category
                 {
                     Name = String.Format("{0}", reader[type]),
-                    Cost = String.Format("{0}", reader["TotalPayment"])
+                    Cost = Convert.ToString(reader["TotalPayment"])
                 };
                 categories.Add(category);
             }
@@ -152,56 +220,56 @@ namespace Personal_Budget
             {
 
                 //test
-                string query = @"SELECT 
-                                    MONTH(Payments.TransactionDate) AS TransactionMonth, 
-                                    SUM(Payments.Payment) AS TotalPayment,
-                                    I.TotalIncome,
-                                    I.TotalIncome - SUM(Payments.Payment) AS NetIncome
-                                FROM 
-                                    Payments 
-                                INNER JOIN 
-                                    (
-                                    SELECT 
-                                        MONTH(IncomeDate) AS IncomeMonth, 
-                                        SUM(Payment) AS TotalIncome 
-                                    FROM Income 
+                string query = @"   SELECT 
+	                                    MONTH(payment.TransactionDate) AS TransactionMonth, 
+	                                    SUM(payment.Payment) AS TotalPayment,
+	                                    I.TotalIncome,
+	                                    I.TotalIncome - SUM(payment.Payment) AS NetIncome
+                                    FROM 
+	                                    payment 
+                                    INNER JOIN 
+	                                    (
+	                                    SELECT 
+		                                    MONTH(income.TransactionDate) AS IncomeMonth, 
+		                                    SUM(Payment) AS TotalIncome 
+	                                    FROM income 
+	                                    GROUP BY 
+		                                    MONTH(income.TransactionDate)
+	                                    ) AS I ON
+	                                    I.IncomeMonth = Month(payment.TransactionDate)
                                     GROUP BY 
-                                        MONTH(IncomeDate)
-                                    ) AS I ON
-                                    I.IncomeMonth = Month(Payments.TransactionDate)
-                                GROUP BY 
-                                    MONTH(Payments.TransactionDate), 
-                                    I.TotalIncome";
+	                                    MONTH(payment.TransactionDate), 
+	                                    I.TotalIncome";
 
-                cmd = new OleDbCommand(query, connection);
+                cmd = new MySqlCommand(query, connection);
             }
 
             else
             {
-                string query = @"SELECT 
-                                    MONTH(Payments.TransactionDate) AS TransactionMonth, 
-                                    SUM(Payments.Payment) AS TotalPayment,
-                                    I.TotalIncome,
-                                    I.TotalIncome - SUM(Payments.Payment) AS NetIncome
-                                FROM 
-                                    Payments 
-                                INNER JOIN 
-                                    (
-                                    SELECT 
-                                        MONTH(IncomeDate) AS IncomeMonth, 
-                                        SUM(Payment) AS TotalIncome 
-                                    FROM Income 
-                                    WHERE YEAR(IncomeDate) = @Year
+                string query = @"   SELECT 
+	                                    MONTH(payment.TransactionDate) AS TransactionMonth, 
+	                                    SUM(payment.Payment) AS TotalPayment,
+	                                    I.TotalIncome,
+	                                    I.TotalIncome - SUM(payment.Payment) AS NetIncome
+                                    FROM 
+	                                    payment 
+                                    INNER JOIN 
+	                                    (
+	                                    SELECT 
+		                                    MONTH(income.TransactionDate) AS IncomeMonth, 
+		                                    SUM(Payment) AS TotalIncome 
+	                                    FROM income 
+                                        WHERE YEAR(income.TransactionDate) = @Year
+	                                    GROUP BY 
+		                                    MONTH(income.TransactionDate)
+	                                    ) AS I ON
+	                                    I.IncomeMonth = Month(payment.TransactionDate)
+                                    WHERE YEAR(payment.TransactionDate) = @Year
                                     GROUP BY 
-                                        MONTH(IncomeDate)
-                                    ) AS I ON
-                                    I.IncomeMonth = Month(Payments.TransactionDate)
-                                WHERE YEAR(Payments.TransactionDate) = @Year
-                                GROUP BY 
-                                    MONTH(Payments.TransactionDate), 
-                                    I.TotalIncome";
+	                                    MONTH(payment.TransactionDate), 
+	                                    I.TotalIncome";
                 //Fill monthCost array
-                cmd = new OleDbCommand(query, connection);
+                cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@Year", year);
 
             }
@@ -216,19 +284,19 @@ namespace Personal_Budget
                 Category paymentMonth = new Category
                 {
                     Name = month,
-                    Cost = String.Format("${0:#.00}", reader["TotalPayment"])
+                    Cost = Convert.ToString(reader["TotalPayment"])
                 };
 
                 Category incomeMonth = new Category
                 {
                     Name = month,
-                    Cost = String.Format("${0:#.00}", reader["TotalIncome"])
+                    Cost = Convert.ToString(reader["TotalIncome"])
                 };
 
                 Category netMonth = new Category
                 {
                     Name = month,
-                    Cost = String.Format("${0:#.00}", reader["NetIncome"])
+                    Cost = Convert.ToString(reader["NetIncome"])
                 };
 
                 paymentMonths.Add(paymentMonth);

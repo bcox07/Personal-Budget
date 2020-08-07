@@ -9,7 +9,8 @@ namespace Personal_Budget
 
     class Connection
     {
-        public String connectionString = "Provider = Microsoft.Jet.OLEDB.4.0; Data Source = ..\\..\\Budget.mdb";
+        public string connectionString = "Server=localhost; Port=3306; DATABASE=personal;UID=root;PWD=test12;";
+
         public String getConnection()
         {
             return connectionString;
